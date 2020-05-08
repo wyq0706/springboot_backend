@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 指定了mapper对应的dao -->
+<mapper namespace="com.mobilecourse.backend.dao.StudentDao">
+
+    <!-- parameterType指定了参数类型 -->
+    <insert id="insert"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Student">
+        INSERT INTO Student
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            username, password
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{username}, #{password}
+        </trim>;
+    </insert>
+    
+</mapper>
