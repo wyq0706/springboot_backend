@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <!-- 指定了mapper对应的dao -->
-<mapper namespace="com.mobilecourse.backend.dao.StudentDao">
+<mapper namespace="com.mobilecourse.backend.dao.TeacherDao">
 
     <!-- parameterType指定了参数类型 -->
-    <insert id="insert"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Student">
-        INSERT INTO student
+    <insert id="insert"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Teacher">
+        INSERT INTO teacher
         <trim prefix="(" suffix=")" suffixOverrides="," >
             username, password
         </trim>
@@ -16,20 +16,15 @@
 
     <select id="ifUsernameDuplicate" resultType="java.lang.Integer" parameterType="java.lang.String">
         SELECT COUNT(*)
-        FROM student
+        FROM teacher
         where username=#{username}
     </select>
 
     <select id="ifUserExists" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM student
+        FROM teacher
         where username=#{username} and password=#{password}
     </select>
 
-    <select id="getUser" resultType="com.mobilecourse.backend.model.Student">
-        SELECT *
-        FROM student
-        where username=#{username} and password=#{password}
-    </select>
 
 </mapper>

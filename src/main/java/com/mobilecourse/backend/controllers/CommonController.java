@@ -10,13 +10,13 @@ import javax.servlet.http.HttpSession;
 public class CommonController {
 
     // session半个小时无交互就会过期
-    private static int MAXTIME = 1800;
+    private static int MAXTIME = 18000;
 
     // 添加一个code，方便客户端根据code来判断服务器处理状态并解析对应的msg
-    String wrapperMsg(int code, String msg) {
+    String wrapperMsg(String msg,String detail) {
         JSONObject wrapperMsg = new JSONObject();
-        wrapperMsg.put("code", code);
-        wrapperMsg.put("msg", msg);
+        wrapperMsg.put("response", msg);
+        wrapperMsg.put("detail",detail);
         return wrapperMsg.toJSONString();
     }
 
