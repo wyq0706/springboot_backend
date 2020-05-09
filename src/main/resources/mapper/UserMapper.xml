@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <!-- 指定了mapper对应的dao -->
-<mapper namespace="com.mobilecourse.backend.dao.StudentDao">
+<mapper namespace="com.mobilecourse.backend.dao.UserDao">
 
     <!-- parameterType指定了参数类型 -->
-    <insert id="insert"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Student">
-        INSERT INTO student
+    <insert id="insert"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.User">
+        INSERT INTO user
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            username, password
+            username, password,type
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            #{username}, #{password}
+            #{username}, #{password},#{type}
         </trim>;
     </insert>
 
     <select id="ifUsernameDuplicate" resultType="java.lang.Integer" parameterType="java.lang.String">
         SELECT COUNT(*)
-        FROM student
+        FROM user
         where username=#{username}
     </select>
 
     <select id="ifUserExists" resultType="java.lang.Integer">
         SELECT COUNT(*)
-        FROM student
+        FROM user
         where username=#{username} and password=#{password}
     </select>
 
-    <select id="getUser" resultType="com.mobilecourse.backend.model.Student">
+    <select id="getUser" resultType="com.mobilecourse.backend.model.User">
         SELECT *
-        FROM student
+        FROM user
         where username=#{username} and password=#{password}
     </select>
 

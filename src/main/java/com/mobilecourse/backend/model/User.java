@@ -1,7 +1,7 @@
 package com.mobilecourse.backend.model;
 
 // 此类中的类型必须和数据库中table的列类型一一对应，否则会出现问题
-public class Student {
+public class User {
     // getter和setter可以使用idea自带的功能生成，右键点击->Generate->Getter and Setter即可自动生成
 
 
@@ -12,6 +12,16 @@ public class Student {
     private String password;
     private String personal_info;
     private boolean verification;
+    //学生/老师
+    private boolean type;
+
+    public boolean isType() {
+        return type;
+    }
+
+    public void setType(boolean type) {
+        this.type = type;
+    }
 
     public int getId() {
         return id;
