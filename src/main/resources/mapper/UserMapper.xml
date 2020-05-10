@@ -32,4 +32,30 @@
         where username=#{username} and password=#{password}
     </select>
 
+    <update id="updateUsername">
+        UPDATE user
+        SET username=#{newName}
+        WHERE username=#{username}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE user
+        SET password=#{newPassword}
+        WHERE username=#{username}
+    </update>
+
+    <update id="updateSignature">
+        UPDATE user
+        SET signature=#{newSignature}
+        WHERE username=#{username}
+    </update>
+
+    <update id="updatePersonalInfo">
+        UPDATE user
+        SET personal_info=#{newPersonalInfo}
+        WHERE username=#{username}
+    </update>
+
+
+
 </mapper>
