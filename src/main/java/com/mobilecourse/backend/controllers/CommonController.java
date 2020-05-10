@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Enumeration;
 
 @Controller
 public class CommonController {
@@ -28,6 +29,24 @@ public class CommonController {
         session.setMaxInactiveInterval(MAXTIME);
         //将信息存入session
         session.setAttribute(keyName, info);
+    }
+
+    public String getInfoFromSession(HttpServletRequest request, String keyName)
+    {
+        //获取session
+        HttpSession session = request.getSession();
+        // 获取session中所有的键值
+        Enumeration<String> attrs = session.getAttributeNames();
+        // 遍历attrs中的
+        while(attrs.hasMoreElements()){
+        // 获取session键值
+            String name = attrs.nextElement().toString();
+            // 根据键值取session中的值
+            String vakue = session.getAttribute(name).toString();
+            // 打印结果
+            if(name.equals(keyName)){return vakue;}
+        }
+        return "";
     }
 
     // 添加信息到session之中，此部分用途很广泛，比如可以通过session获取到对应的用户名或者用户ID，避免繁冗操作

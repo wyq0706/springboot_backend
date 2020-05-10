@@ -64,4 +64,6 @@ public class UserController extends CommonController {
             }
             return wrapperMsg("valid","成功登出");
     }
+
+
 }
