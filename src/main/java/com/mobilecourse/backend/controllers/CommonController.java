@@ -1,6 +1,7 @@
 package com.mobilecourse.backend.controllers;
 
 import com.alibaba.fastjson.JSONObject;
+import com.mobilecourse.backend.model.User;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,22 +32,11 @@ public class CommonController {
         session.setAttribute(keyName, info);
     }
 
-    public String getInfoFromSession(HttpServletRequest request, String keyName)
+    public User getUserFromSession(HttpServletRequest request)
     {
-        //获取session
-        HttpSession session = request.getSession();
-        // 获取session中所有的键值
-        Enumeration<String> attrs = session.getAttributeNames();
-        // 遍历attrs中的
-        while(attrs.hasMoreElements()){
-        // 获取session键值
-            String name = attrs.nextElement().toString();
-            // 根据键值取session中的值
-            String vakue = session.getAttribute(name).toString();
-            // 打印结果
-            if(name.equals(keyName)){return vakue;}
-        }
-        return "";
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        return account;
     }
 
     // 添加信息到session之中，此部分用途很广泛，比如可以通过session获取到对应的用户名或者用户ID，避免繁冗操作
