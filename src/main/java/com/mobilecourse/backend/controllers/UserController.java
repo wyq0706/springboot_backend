@@ -64,4 +64,55 @@ public class UserController extends CommonController {
             }
             return wrapperMsg("valid","成功登出");
     }
+
+    @RequestMapping(value = "/update_signature", method = { RequestMethod.POST })
+    public String update_signature(HttpServletRequest request, @RequestParam(value = "signature")String signature) {
+        String username = getInfoFromSession(request,"sid");
+        if(username!=null) {//如果不为空
+            UserMapper.updateSignature(username,signature);
+            return wrapperMsg("valid","成功更新");
+        }else {
+            return wrapperMsg("invalid","未登录");
+        }
+    }
+
+    @RequestMapping(value = "/update_username", method = { RequestMethod.POST })
+    public String update_username(HttpServletRequest request, @RequestParam(value = "username")String newName) {
+        String username = getInfoFromSession(request,"sid");
+        if(username!=null) {//如果不为空
+            if(UserMapper.ifUsernameDuplicate(newName)>0){
+                return wrapperMsg("invalid","该用户名已存在");
+            }
+            UserMapper.updateUsername(username,newName);
+            removeInfoFromSession(request,"sid");
+            putInfoToSession(request, "sid", newName);
+            return wrapperMsg("valid","成功更新");
+        }else {
+            return wrapperMsg("invalid","未登录");
+        }
+    }
+
+    @RequestMapping(value = "/update_password", method = { RequestMethod.POST })
+    public String update_password(HttpServletRequest request, @RequestParam(value = "password")String password) {
+        String username = getInfoFromSession(request,"sid");
+        if(username!=null) {//如果不为空
+            UserMapper.updateUsername(username,password);
+            return wrapperMsg("valid","成功更新");
+        }else {
+            return wrapperMsg("invalid","未登录");
+        }
+    }
+
+    @RequestMapping(value = "/update_personal_info", method = { RequestMethod.POST })
+    public String update_personal_info(HttpServletRequest request, @RequestParam(value = "personal_info")String personal_info) {
+        String username = getInfoFromSession(request,"sid");
+        if(username!=null) {//如果不为空
+            UserMapper.updateUsername(username,personal_info);
+            return wrapperMsg("valid","成功更新");
+        }else {
+            return wrapperMsg("invalid","未登录");
+        }
+    }
+
+
 }

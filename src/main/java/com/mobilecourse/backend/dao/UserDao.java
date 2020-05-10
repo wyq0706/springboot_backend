@@ -22,4 +22,12 @@ public interface UserDao {
     //获取用户
     List<User> getUser(@Param("username")String s, @Param("password")String t);
 
+    int updateUsername(@Param("username")String idff, String newName);
+
+    int updatePassword(@Param("username")String idff, String newPassword);
+
+    int updateSignature(@Param("username")String idff, String newSignature);
+
+    int updatePersonalInfo(@Param("username")String idff, String newPersonalInfo);
+
 }
