@@ -79,4 +79,32 @@
         ORDER by project.created_time DESC
     </select>
 
+    <insert id="goFollow">
+        INSERT INTO rela_follow
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            followed_id,follower_id
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{followed_id}, #{follower_id}
+        </trim>;
+    </insert>
+
+    <select id="getFollow" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        WHERE user.id in (
+        SELECT followed_id as id
+        FROM rela_follow
+        WHERE rela_follow.follower_id=#{id});
+    </select>
+
+    <select id="getFollowed" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        WHERE user.id in (
+        SELECT follower_id as id
+        FROM rela_follow
+        WHERE rela_follow.followed_id=#{id});
+    </select>
+
 </mapper>

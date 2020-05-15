@@ -129,6 +129,42 @@ public class UserController extends CommonController {
         }
     }
 
+    @RequestMapping(value = "/get_follower", method = { RequestMethod.GET })
+    public String get_follow(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            List<User> list=UserMapper.getFollow(account.getId());
+            JSONArray jsonArray = new JSONArray();
+            for (User s : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", s.getId());
+                jsonObject.put("name", s.getUsername());
+                jsonArray.add(jsonObject);
+            }
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+    @RequestMapping(value = "/get_followed", method = { RequestMethod.GET })
+    public String get_followed(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            List<User> list=UserMapper.getFollowed(account.getId());
+            JSONArray jsonArray = new JSONArray();
+            for (User s : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", s.getId());
+                jsonObject.put("name", s.getUsername());
+                jsonArray.add(jsonObject);
+            }
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
     @RequestMapping(value = "/projects", method = { RequestMethod.GET })
     public String projects() {
         List<Project> list=UserMapper.getProjects();
@@ -149,6 +185,4 @@ public class UserController extends CommonController {
         }
         return wrapperMsgArray("valid","",jsonArray);
     }
-
-
 }

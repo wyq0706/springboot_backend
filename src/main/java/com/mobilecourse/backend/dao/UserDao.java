@@ -32,4 +32,10 @@ public interface UserDao {
     int updatePersonalInfo(@Param("username")String idff, String newPersonalInfo);
 
     List<Project> getProjects();
+
+    void goFollow(@Param("followed_id")Integer i,@Param("follower_id")Integer j);
+
+    List<User> getFollow(@Param("id")Integer i);
+
+    List<User> getFollowed(@Param("id")Integer i);
 }
