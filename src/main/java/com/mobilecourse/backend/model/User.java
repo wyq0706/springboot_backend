@@ -14,6 +14,42 @@ public class User {
     private boolean verification;
     //学生/老师
     private boolean type;
+    private String school;
+    private String department;
+    private String real_name;
+    private String grade;
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getReal_name() {
+        return real_name;
+    }
+
+    public void setReal_name(String real_name) {
+        this.real_name = real_name;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
 
     public boolean isType() {
         return type;

@@ -56,6 +56,27 @@
         WHERE username=#{username}
     </update>
 
+    <!--    返回一对一结果集-->
+    <resultMap id="ProjectsJoinTeacher" type="com.mobilecourse.backend.model.Project">
+        <id column="project_id" property="id"/>
+        <result column="project_title" property="title"/>
+        <result column="requirement" property="requirement"/>
+        <result column="teacher_id" property="teacher.id"/>
+        <result column="department" property="teacher.department"/>
+        <result column="teacher_name" property="teacher.username"/>
+    </resultMap>
 
+
+    <select id="getProjects" resultMap="ProjectsJoinTeacher">
+        SELECT user.id as teacher_id,
+        user.username as teacher_name,
+        user.department as department,
+        project.title as project_title,
+        project.requirement,
+        project.id as project_id
+        FROM project.user,project.project
+        WHERE user.id=project.teacher_id
+        ORDER by project.created_time DESC
+    </select>
 
 </mapper>

@@ -1,7 +1,9 @@
 package com.mobilecourse.backend.controllers;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.model.User;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +17,20 @@ public class CommonController {
     private static int MAXTIME = 18000;
 
     // 添加一个code，方便客户端根据code来判断服务器处理状态并解析对应的msg
-    String wrapperMsg(String msg,String detail) {
+    String wrapperMsg(String msg,String detail,@Nullable JSONObject data) {
         JSONObject wrapperMsg = new JSONObject();
         wrapperMsg.put("response", msg);
         wrapperMsg.put("detail",detail);
+        wrapperMsg.put("data",data);
+        return wrapperMsg.toJSONString();
+    }
+
+
+    String wrapperMsgArray(String msg,String detail,@Nullable JSONArray data) {
+        JSONObject wrapperMsg = new JSONObject();
+        wrapperMsg.put("response", msg);
+        wrapperMsg.put("detail",detail);
+        wrapperMsg.put("data",data);
         return wrapperMsg.toJSONString();
     }
 

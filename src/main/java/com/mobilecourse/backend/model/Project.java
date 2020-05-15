@@ -59,4 +59,13 @@ public class Project {
     public void setTeacher_id(int teacher_id) {
         this.teacher_id = teacher_id;
     }
+
+    private User teacher;
+    public User getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(User teacher) {
+        this.teacher = teacher;
+    }
 }

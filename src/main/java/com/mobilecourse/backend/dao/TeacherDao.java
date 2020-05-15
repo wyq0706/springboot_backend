@@ -13,4 +13,6 @@ public interface TeacherDao {
     // 插入，可以指定类为输入的参数
     void uploadProject(Project s);
 
+    void updateProject(Project s);
+
 }

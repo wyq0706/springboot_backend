@@ -4,14 +4,23 @@
 <mapper namespace="com.mobilecourse.backend.dao.TeacherDao">
 
     <!-- parameterType指定了参数类型 -->
-    <insert id="uploadProject"  keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Project">
-        INSERT INTO project
+    <insert id="uploadProject" keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Project">
+        insert into project
         <trim prefix="(" suffix=")" suffixOverrides="," >
             title,research_direction,requirement,description,teacher_id
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             #{title}, #{research_direction},#{requirement},#{description},#{teacher_id}
         </trim>;
+    </insert>
+
+    <insert id="updateProject" parameterType="com.mobilecourse.backend.model.Project">
+        update project set
+        <if test="title!=''">title=#{title},</if>
+        <if test="research_direction!=''">research_direction=#{research_direction},</if>
+        <if test="requirement!=''">requirement=#{requirement},</if>
+        <if test="description!=''">description=#{description}</if>
+        where id=#{id};
     </insert>
 
 

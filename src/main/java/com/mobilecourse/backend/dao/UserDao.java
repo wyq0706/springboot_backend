@@ -1,5 +1,6 @@
 package com.mobilecourse.backend.dao;
 
+import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,4 +31,5 @@ public interface UserDao {
 
     int updatePersonalInfo(@Param("username")String idff, String newPersonalInfo);
 
+    List<Project> getProjects();
 }
