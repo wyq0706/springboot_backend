@@ -137,6 +137,7 @@ public class UserController extends CommonController {
             JSONArray jsonArray = new JSONArray();
             for (User s : list) {
                 JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type",s.isType());
                 jsonObject.put("id", s.getId());
                 jsonObject.put("name", s.getUsername());
                 jsonArray.add(jsonObject);
@@ -155,6 +156,7 @@ public class UserController extends CommonController {
             JSONArray jsonArray = new JSONArray();
             for (User s : list) {
                 JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type",s.isType());
                 jsonObject.put("id", s.getId());
                 jsonObject.put("name", s.getUsername());
                 jsonArray.add(jsonObject);
@@ -185,4 +187,63 @@ public class UserController extends CommonController {
         }
         return wrapperMsgArray("valid","",jsonArray);
     }
+
+    @RequestMapping(value = "/verification",method = {RequestMethod.POST})
+    public String verification(HttpServletRequest request,
+                               @RequestParam(value = "realname")String realname,
+                               @RequestParam(value = "school")String school,
+                               @RequestParam(value = "department")String department,
+                               @RequestParam(value = "grade")String grade) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            String username = account.getUsername();
+            UserMapper.verification(username,realname,school,department,grade);
+            return wrapperMsg("valid","成功验证",null);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
+    @RequestMapping(value = "/home",method = {RequestMethod.GET})
+    public String home(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            JSONObject jsonObject = new JSONObject();
+            int id = account.getId();
+            String username = account.getUsername();
+            Boolean type = account.isType();
+            String icon_url = "";
+            Boolean verification = account.isVerification();
+            String signature = account.getSignature();
+            String person_info = account.getPersonal_info();
+            String veri_info = account.getReal_name()+" "+account.getSchool()+account.getDepartment()+account.getGrade();
+            Integer follow_num = UserMapper.getFollowNum(id);
+            if(follow_num==null) follow_num = 0;
+            Integer followee_num = UserMapper.getFollowedNum(id);
+            if(followee_num==null) followee_num=0;
+            Integer star_or_pro_num;
+            if(type){
+                star_or_pro_num = UserMapper.getProNum(id);
+            }
+            else{
+                star_or_pro_num= UserMapper.getStarNum(id);
+            }
+            if(star_or_pro_num==null)star_or_pro_num=0;
+            jsonObject.put("icon_url",icon_url);
+            jsonObject.put("username",username);
+            jsonObject.put("type",type);
+            jsonObject.put("verification",verification);
+            jsonObject.put("signature",signature);
+            jsonObject.put("personal_info",person_info);
+            jsonObject.put("veri_info",veri_info);
+            jsonObject.put("follow_num",follow_num);
+            jsonObject.put("followee_num",followee_num);
+            jsonObject.put("star_or_pro_num",star_or_pro_num);
+            return wrapperMsg("valid","",jsonObject);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
+
 }

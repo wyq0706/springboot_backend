@@ -56,6 +56,12 @@
         WHERE username=#{username}
     </update>
 
+    <update id="verification">
+        UPDATE user
+        SET verification=true, school=#{school}, department=#{department},grade=#{grade},real_name=#{realname}
+        WHERE username=#{username}
+    </update>
+
     <!--    返回一对一结果集-->
     <resultMap id="ProjectsJoinTeacher" type="com.mobilecourse.backend.model.Project">
         <id column="project_id" property="id"/>
@@ -98,6 +104,16 @@
         WHERE rela_follow.follower_id=#{id});
     </select>
 
+    <select id="getFollowNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT count(*)
+        FROM user
+        WHERE user.id in (
+        SELECT followed_id as id
+        FROM rela_follow
+        WHERE rela_follow.follower_id=#{id});
+    </select>
+
+
     <select id="getFollowed" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
         SELECT *
         FROM user
@@ -106,5 +122,36 @@
         FROM rela_follow
         WHERE rela_follow.followed_id=#{id});
     </select>
+
+    <select id="getFollowedNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT count(*)
+        FROM user
+        WHERE user.id in (
+        SELECT follower_id as id
+        FROM rela_follow
+        WHERE rela_follow.followed_id=#{id});
+    </select>
+
+    <select id="getProNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT count(*)
+        FROM project.project
+        WHERE project.project.teacher_id=#{id};
+    </select>
+
+    <select id="getStarNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT count(*)
+        FROM rela_project_star
+        WHERE student_id=#{id};
+    </select>
+
+
+
+
+
+
+
+
+
+
 
 </mapper>

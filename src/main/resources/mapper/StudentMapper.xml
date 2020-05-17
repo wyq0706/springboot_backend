@@ -18,5 +18,19 @@
         WHERE project_id=#{project_id} and student_id=#{student_id}
     </insert>
 
+    <insert id="goStar">
+        INSERT INTO rela_project_star
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            project_id,student_id
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{project_id}, #{student_id}
+        </trim>;
+    </insert>
+
+    <insert id="quitStar">
+        DELETE FROM rela_project_star
+        WHERE project_id=#{project_id} and student_id=#{student_id}
+    </insert>
 
 </mapper>

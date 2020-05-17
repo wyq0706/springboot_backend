@@ -14,4 +14,5 @@ public interface StudentDao {
     void goSignin(@Param("project_id") Integer i, @Param("student_id") Integer j);
 
     void quitSignin(@Param("project_id") Integer i, @Param("student_id") Integer j);
+
 }

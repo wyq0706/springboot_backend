@@ -23,13 +23,13 @@ public interface UserDao {
     //获取用户
     List<User> getUser(@Param("username")String s, @Param("password")String t);
 
-    int updateUsername(@Param("username")String idff, String newName);
+    void updateUsername(@Param("username")String s, String newName);
 
-    int updatePassword(@Param("username")String idff, String newPassword);
+    void updatePassword(@Param("username")String s, String newPassword);
 
-    int updateSignature(@Param("username")String idff, String newSignature);
+    void updateSignature(@Param("username")String s, String newSignature);
 
-    int updatePersonalInfo(@Param("username")String idff, String newPersonalInfo);
+    void updatePersonalInfo(@Param("username")String s, String newPersonalInfo);
 
     List<Project> getProjects();
 
@@ -37,5 +37,15 @@ public interface UserDao {
 
     List<User> getFollow(@Param("id")Integer i);
 
+    Integer getFollowNum(@Param("id")Integer i);
+
     List<User> getFollowed(@Param("id")Integer i);
+
+    Integer getFollowedNum(@Param("id")Integer i);
+
+    Integer getProNum(@Param("id")Integer i);
+
+    Integer getStarNum(@Param("id")Integer i);
+
+    void verification(@Param("username")String s, String realname,String school,String department,String grade);
 }

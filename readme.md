@@ -25,4 +25,6 @@ foreign key (teacher_id) references user(id) on delete cascade on update cascade
 create table rela_follow (followed_id int unsigned,follower_id int unsigned);
 
 create table rela_project_signin (project_id int unsigned,student_id int unsigned);
+
+create table rela_project_star (project_id int unsigned,student_id int unsigned);
 ```
