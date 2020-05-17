@@ -32,6 +32,12 @@
         where username=#{username} and password=#{password}
     </select>
 
+    <select id="getUserByName" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        where username=#{username}
+    </select>
+
     <update id="updateUsername">
         UPDATE user
         SET username=#{newName}
@@ -104,7 +110,7 @@
         WHERE rela_follow.follower_id=#{id});
     </select>
 
-    <select id="getFollowNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+    <select id="getFollowNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(*)
         FROM user
         WHERE user.id in (
@@ -123,7 +129,7 @@
         WHERE rela_follow.followed_id=#{id});
     </select>
 
-    <select id="getFollowedNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+    <select id="getFollowedNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(*)
         FROM user
         WHERE user.id in (
@@ -132,24 +138,26 @@
         WHERE rela_follow.followed_id=#{id});
     </select>
 
-    <select id="getProNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+    <select id="getProNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(*)
         FROM project.project
         WHERE project.project.teacher_id=#{id};
     </select>
 
-    <select id="getStarNum" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+    <select id="getStarNum" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(*)
         FROM rela_project_star
         WHERE student_id=#{id};
     </select>
 
-
-
-
-
-
-
+    <select id="getStar" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Project">
+        SELECT *
+        FROM project.project
+        WHERE project.project.id in (
+        SELECT project_id as id
+        FROM rela_project_star
+        WHERE rela_project_star.student_id=#{id});
+    </select>
 
 
 

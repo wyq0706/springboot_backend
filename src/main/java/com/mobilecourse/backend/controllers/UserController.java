@@ -245,5 +245,56 @@ public class UserController extends CommonController {
         }
     }
 
+    @RequestMapping(value = "/user_info",method = {RequestMethod.POST})
+    public String userInfo(HttpServletRequest request,
+                           @RequestParam(value = "username")String otheruser) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            JSONObject jsonObject = new JSONObject();
+            List<User> s = UserMapper.getUserByName(otheruser);
+            if(s==null){return wrapperMsg("invalid","没有该用户名的用户",null);}
+            User otherUser = s.get(0);
+            String username = otherUser.getUsername();
+            Boolean type = otherUser.isType();
+            String icon_url = "";
+            Boolean verification = otherUser.isVerification();
+            String signature = otherUser.getSignature();
+            String person_info = otherUser.getPersonal_info();
+            String veri_info = otherUser.getReal_name()+" "+otherUser.getSchool()+otherUser.getDepartment()+account.getGrade();
+            jsonObject.put("icon_url",icon_url);
+            jsonObject.put("username",username);
+            jsonObject.put("type",type);
+            jsonObject.put("verification",verification);
+            jsonObject.put("signature",signature);
+            jsonObject.put("personal_info",person_info);
+            jsonObject.put("veri_info",veri_info);
+            return wrapperMsg("valid","",jsonObject);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
+    @RequestMapping(value = "/get_star", method = { RequestMethod.GET })
+    public String getStar(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            List<Project> list=UserMapper.getStar(account.getId());
+            JSONArray jsonArray = new JSONArray();
+            for (Project s : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",s.getId());
+                jsonObject.put("title",s.getTitle());
+                jsonObject.put("description",s.getDescription());
+                jsonObject.put("requirement",s.getRequirement());
+                jsonObject.put("teacher",s.getTeacher());
+                jsonArray.add(jsonObject);
+            }
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+
 
 }

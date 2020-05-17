@@ -22,6 +22,7 @@ public interface UserDao {
 
     //获取用户
     List<User> getUser(@Param("username")String s, @Param("password")String t);
+    List<User> getUserByName(@Param("username")String s);
 
     void updateUsername(@Param("username")String s, String newName);
 
@@ -46,6 +47,8 @@ public interface UserDao {
     Integer getProNum(@Param("id")Integer i);
 
     Integer getStarNum(@Param("id")Integer i);
+
+    List<Project> getStar(@Param("id")Integer i);
 
     void verification(@Param("username")String s, String realname,String school,String department,String grade);
 }
