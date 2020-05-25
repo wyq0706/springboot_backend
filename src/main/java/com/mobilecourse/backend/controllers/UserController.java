@@ -9,9 +9,12 @@ import com.mobilecourse.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.*;
 import java.util.List;
 
 @RestController
@@ -128,6 +131,53 @@ public class UserController extends CommonController {
             return wrapperMsg("invalid","未登录",null);
         }
     }
+
+    @RequestMapping(value = "/update_icon", method = { RequestMethod.POST })
+    public String update_icon(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            String id = String.valueOf(account.getId());
+            if (!file.isEmpty()) {
+                String fileName = id + ".jpg";
+                String filePath = System.getProperty("user.dir")+"/src/main/resources/icon/"+fileName;
+                System.out.println(filePath);
+                try {
+                    file.transferTo(new File(filePath));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return wrapperMsg("invalid","更新失败",null);
+                }
+
+            }
+            return wrapperMsg("valid","成功更新",null);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+    @RequestMapping(value = "/getIcon/{id}", method = { RequestMethod.GET })
+    public void getIcon(HttpServletRequest request, @PathVariable(value = "id") String id, HttpServletResponse response) throws IOException{
+        try {
+            String fileName = id + ".jpg";
+            String address = System.getProperty("user.dir")+"/src/main/resources/icon/"+fileName;
+            FileInputStream hFile=new FileInputStream(new File(address));
+            int i=hFile.available();
+            byte data[]=new byte[i];
+            hFile.read(data);
+            hFile.close();
+            response.setContentType("image/jpeg");
+            OutputStream toClient=response.getOutputStream();
+            toClient.write(data);
+            toClient.close();
+        }catch (IOException e){
+            PrintWriter toClient=response.getWriter();
+            response.setContentType("text/html;charset=gb2312");
+            toClient.write("无法打开图片");
+            toClient.close();
+        }
+
+    }
+
 
     @RequestMapping(value = "/get_follower", method = { RequestMethod.GET })
     public String get_follow(HttpServletRequest request) {
