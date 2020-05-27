@@ -38,10 +38,10 @@
         </trim>;
     </insert>
 
-    <insert id="quitStar">
+    <delete id="quitStar">
         DELETE FROM rela_project_star
         WHERE project_id=#{project_id} and student_id=#{student_id}
-    </insert>
+    </delete>
 
     <update id="updatePlan" parameterType="com.mobilecourse.backend.model.Plan">
         update plan
@@ -53,5 +53,10 @@
         </set>
         where id=#{id};
     </update>
+
+    <delete id="cancelPlan" parameterType="java.lang.Integer">
+        delete from plan
+        where id=#{id};
+    </delete>
 
 </mapper>

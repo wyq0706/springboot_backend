@@ -103,4 +103,55 @@ public class StudentController extends CommonController {
         StudentMapper.updatePlan(s);
         return wrapperMsg("valid","成功修改",null);
     }
+
+    @RequestMapping(value = "/cancel_plan", method = { RequestMethod.POST })
+    public String cancel_plan(HttpServletRequest request,@RequestParam(value="id")Integer id) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(account.isType()){
+            return wrapperMsg("invalid","该账号不是学生",null);
+        }
+        if(id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        StudentMapper.cancelPlan(id);
+        return wrapperMsg("valid", "成功删除", null);
+    }
+
+    @RequestMapping(value = "/upload_star", method = { RequestMethod.POST })
+    public String upload_star(HttpServletRequest request,@RequestParam(value="id")Integer project_id) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(account.isType()){
+            return wrapperMsg("invalid","该账号不是学生",null);
+        }
+        if(project_id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        StudentMapper.goStar(project_id,account.getId());
+        return wrapperMsg("valid", "成功关注", null);
+    }
+
+    @RequestMapping(value = "/cancel_star", method = { RequestMethod.POST })
+    public String cancel_star(HttpServletRequest request,@RequestParam(value="id")Integer project_id) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(account.isType()){
+            return wrapperMsg("invalid","该账号不是学生",null);
+        }
+        if(project_id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        StudentMapper.quitStar(project_id,account.getId());
+        return wrapperMsg("valid", "成功取消关注", null);
+    }
 }

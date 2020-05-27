@@ -20,4 +20,10 @@ public interface StudentDao {
 
     void updatePlan(Plan s);
 
+    void cancelPlan(int id);
+
+    void goStar(@Param("project_id") Integer i, @Param("student_id") Integer j);
+
+    void quitStar(@Param("project_id") Integer i, @Param("student_id") Integer j);
+
 }

@@ -1,5 +1,6 @@
 package com.mobilecourse.backend.controllers;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.dao.TeacherDao;
 import com.mobilecourse.backend.model.Project;
@@ -78,5 +79,51 @@ public class TeacherController extends CommonController {
         s.setTeacher_id(account.getId());
         TeacherMapper.updateProject(s);
         return wrapperMsg("valid","成功修改",null);
+    }
+
+    @RequestMapping(value = "/cancel_recruit", method = { RequestMethod.POST })
+    public String cancel_recruit(HttpServletRequest request,@RequestParam(value="id")Integer id) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(!account.isType()){
+            return wrapperMsg("invalid","该账号不是老师",null);
+        }
+        if(id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        TeacherMapper.cancelProject(id);
+        return wrapperMsg("valid", "成功删除", null);
+    }
+
+    @RequestMapping(value = "/get_signin_student", method = { RequestMethod.GET })
+    public String get_signin_student(HttpServletRequest request,@RequestParam(value="id")Integer id) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(!account.isType()){
+            return wrapperMsg("invalid","该账号不是老师",null);
+        }
+        if(id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        TeacherMapper.getSignin(id);
+        List<User> list=TeacherMapper.getSignin(id);
+        JSONArray jsonArray = new JSONArray();
+        for (User s : list) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("type",s.isType());
+            jsonObject.put("id", s.getId());
+            jsonObject.put("name", s.getUsername());
+            jsonObject.put("real_name",s.getReal_name());
+            jsonObject.put("school",s.getSchool());
+            jsonObject.put("grade",s.getGrade());
+            jsonArray.add(jsonObject);
+        }
+        return wrapperMsgArray("valid", "", jsonArray);
     }
 }

@@ -25,6 +25,18 @@
         where id=#{id};
     </update>
 
+    <delete id="cancelProject" parameterType="java.lang.Integer">
+        delete from project
+        where id=#{id};
+    </delete>
 
+    <select id="getSignin" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        WHERE user.id in (
+        SELECT id
+        FROM rela_project_signin
+        WHERE project_id=#{project_id});
+    </select>
 
 </mapper>
