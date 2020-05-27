@@ -295,6 +295,37 @@ public class UserController extends CommonController {
         }
     }
 
+    @RequestMapping(value = "/project_info",method = {RequestMethod.GET})
+    public String project_info(HttpServletRequest request, @RequestParam(value = "id")Integer project_id) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            Project s=UserMapper.getSingleProject(project_id);
+            JSONArray jsonArray = new JSONArray();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("project_id", s.getId());
+            jsonObject.put("project_title", s.getTitle());
+            jsonObject.put("teacher", s.getTeacher().getUsername());
+            jsonObject.put("teacher_id",s.getTeacher().getId());
+            if(s.getTeacher().getDepartment()==null){
+                jsonObject.put("department","");
+            }else {
+                jsonObject.put("department", s.getTeacher().getDepartment());
+            }
+            jsonObject.put("requirement",s.getRequirement());
+            jsonObject.put("description",s.getRequirement());
+            jsonObject.put("research_direction",s.getResearch_direction());
+
+            boolean ifStarred = UserMapper.getProjectIfStarred(project_id, account.getId())>0;
+            boolean ifSigned= UserMapper.getProjectIfSigned(project_id, account.getId())>0;
+
+            jsonObject.put("isStarred",ifStarred);
+            jsonObject.put("isRegistered",ifSigned);
+            return wrapperMsg("valid","",jsonObject);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
     @RequestMapping(value = "/user_info",method = {RequestMethod.POST})
     public String userInfo(HttpServletRequest request,
                            @RequestParam(value = "username")String otheruser) {

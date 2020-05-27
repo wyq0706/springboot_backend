@@ -76,6 +76,8 @@
         <result column="teacher_id" property="teacher.id"/>
         <result column="department" property="teacher.department"/>
         <result column="teacher_name" property="teacher.username"/>
+        <result column="description" property="description"/>
+        <result column="research_direction" property="research_direction"/>
     </resultMap>
 
 
@@ -85,7 +87,9 @@
         user.department as department,
         project.title as project_title,
         project.requirement,
-        project.id as project_id
+        project.id as project_id,
+        project.description as description,
+        project.research_direction as research_direction
         FROM project.user,project.project
         WHERE user.id=project.teacher_id
         ORDER by project.created_time DESC
@@ -159,6 +163,32 @@
         WHERE rela_project_star.student_id=#{id});
     </select>
 
+    <select id="getProjectIfStarred"  resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM rela_project_star
+        WHERE rela_project_star.project_id=#{project_id}
+        and rela_project_star.student_id=#{student_id};
+    </select>
+
+    <select id="getProjectIfSigned"  resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM rela_project_signin
+        WHERE rela_project_signin.project_id=#{project_id}
+        and rela_project_signin.student_id=#{student_id};
+    </select>
+
+    <select id="getSingleProject"  resultMap="ProjectsJoinTeacher">
+        SELECT user.id as teacher_id,
+        user.username as teacher_name,
+        user.department as department,
+        project.title as project_title,
+        project.requirement,
+        project.id as project_id,
+        project.description as description,
+        project.research_direction as research_direction
+        FROM project.user,project.project
+        WHERE project.id=#{project_id} and user.id=project.teacher_id;
+    </select>
 
 
 

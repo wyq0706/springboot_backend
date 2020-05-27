@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface UserDao {
@@ -49,6 +50,12 @@ public interface UserDao {
     Integer getStarNum(@Param("id")Integer i);
 
     List<Project> getStar(@Param("id")Integer i);
+
+    int getProjectIfStarred(@Param("project_id")Integer i,@Param("student_id")Integer i2);
+
+    int getProjectIfSigned(@Param("project_id")Integer i,@Param("student_id")Integer i2);
+
+    Project getSingleProject(@Param("project_id")Integer i);
 
     void verification(@Param("username")String s, String realname,String school,String department,String grade);
 }
