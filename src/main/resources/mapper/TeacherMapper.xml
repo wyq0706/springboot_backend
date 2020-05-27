@@ -14,14 +14,16 @@
         </trim>;
     </insert>
 
-    <insert id="updateProject" parameterType="com.mobilecourse.backend.model.Project">
-        update project set
+    <update id="updateProject" parameterType="com.mobilecourse.backend.model.Project">
+        update project
+        <set>
         <if test="title!=''">title=#{title},</if>
         <if test="research_direction!=''">research_direction=#{research_direction},</if>
         <if test="requirement!=''">requirement=#{requirement},</if>
         <if test="description!=''">description=#{description}</if>
+        </set>
         where id=#{id};
-    </insert>
+    </update>
 
 
 

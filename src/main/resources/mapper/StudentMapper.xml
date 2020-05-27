@@ -3,6 +3,16 @@
 <!-- 指定了mapper对应的dao -->
 <mapper namespace="com.mobilecourse.backend.dao.StudentDao">
 
+    <insert id="uploadPlan" keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Plan">
+        insert into plan
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            title,plan_direction,type,description,student_id
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{title}, #{plan_direction},#{type},#{description},#{student_id}
+        </trim>;
+    </insert>
+
     <insert id="goSignin">
         INSERT INTO rela_project_signin
         <trim prefix="(" suffix=")" suffixOverrides="," >
@@ -32,5 +42,16 @@
         DELETE FROM rela_project_star
         WHERE project_id=#{project_id} and student_id=#{student_id}
     </insert>
+
+    <update id="updatePlan" parameterType="com.mobilecourse.backend.model.Plan">
+        update plan
+        <set>
+        <if test="title!=''">title=#{title},</if>
+        <if test="plan_direction!=''">plan_direction=#{plan_direction},</if>
+        <if test="type!=''">type=#{type},</if>
+        <if test="description!=''">description=#{description}</if>
+        </set>
+        where id=#{id};
+    </update>
 
 </mapper>

@@ -27,4 +27,12 @@ create table rela_follow (followed_id int unsigned,follower_id int unsigned);
 create table rela_project_signin (project_id int unsigned,student_id int unsigned);
 
 create table rela_project_star (project_id int unsigned,student_id int unsigned);
+
+create table plan (id int unsigned auto_increment,
+title varchar(40) not null,plan_direction varchar(50),
+type varchar(20),
+description varchar(200),student_id int unsigned,
+created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+primary key (id),
+foreign key (student_id) references user(id) on delete cascade on update cascade );
 ```

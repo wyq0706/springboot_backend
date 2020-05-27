@@ -1,5 +1,6 @@
 package com.mobilecourse.backend.dao;
 
+import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -14,5 +15,9 @@ public interface StudentDao {
     void goSignin(@Param("project_id") Integer i, @Param("student_id") Integer j);
 
     void quitSignin(@Param("project_id") Integer i, @Param("student_id") Integer j);
+
+    void uploadPlan(Plan s);
+
+    void updatePlan(Plan s);
 
 }

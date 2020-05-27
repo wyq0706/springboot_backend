@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.dao.StudentDao;
 import com.mobilecourse.backend.dao.UserDao;
+import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +47,60 @@ public class StudentController extends CommonController {
         }else {
             return wrapperMsg("invalid","未登录",null);
         }
+    }
+
+    @RequestMapping(value = "/upload_plan", method = { RequestMethod.POST })
+    public String upload(HttpServletRequest request,@RequestParam(value = "title")String title,
+                         @RequestParam(value = "plan_direction",defaultValue="")String plan_direction,
+                         @RequestParam(value = "type",defaultValue="") String type,
+                         @RequestParam(value = "description",defaultValue="") String description) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(account.isType()){
+            return wrapperMsg("invalid","该账号不是学生",null);
+        }
+        if(title==null){
+            return wrapperMsg("invalid","标题不能为空",null);
+        }
+        Plan s = new Plan();
+        s.setTitle(title);
+        s.setPlan_direction(plan_direction);
+        s.setType(type);
+        s.setDescription(description);
+        s.setStudent_id(account.getId());
+        StudentMapper.uploadPlan(s);
+        JSONObject wrapperMsg = new JSONObject();
+        wrapperMsg.put("plan_id", s.getId());
+        return wrapperMsg("valid","成功创建",wrapperMsg);
+    }
+
+    @RequestMapping(value = "/update_plan", method = { RequestMethod.POST })
+    public String update_plan(HttpServletRequest request,@RequestParam(value="id")Integer id,
+                                 @RequestParam(value = "title",defaultValue="")String title,
+                                 @RequestParam(value = "plan_direction",defaultValue="")String plan_direction,
+                                 @RequestParam(value = "type",defaultValue="") String type,
+                                 @RequestParam(value = "description",defaultValue="") String description) {
+        HttpSession session=request.getSession();
+        User account=(User)session.getAttribute("sid");
+        if(account==null) {//如果不为空
+            return wrapperMsg("invalid","该账号未登录",null);
+        }
+        if(account.isType()){
+            return wrapperMsg("invalid","该账号不是学生",null);
+        }
+        if(id==null){
+            return wrapperMsg("invalid","项目id不能为空",null);
+        }
+        Plan s = new Plan();
+        s.setTitle(title);
+        s.setPlan_direction(plan_direction);
+        s.setType(type);
+        s.setDescription(description);
+        s.setId(id);
+        StudentMapper.updatePlan(s);
+        return wrapperMsg("valid","成功修改",null);
     }
 }
