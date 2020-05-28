@@ -35,4 +35,10 @@ description varchar(200),student_id int unsigned,
 created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 primary key (id),
 foreign key (student_id) references user(id) on delete cascade on update cascade );
+
+create table chat (id int unsigned auto_increment,
+from_id int unsigned,to_id int unsigned,
+message varchar(100) not null,
+created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+primary key (id));
 ```

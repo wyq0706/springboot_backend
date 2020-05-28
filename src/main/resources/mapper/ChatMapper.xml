@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 指定了mapper对应的dao -->
+<mapper namespace="com.mobilecourse.backend.dao.ChatDao">
+
+    <insert id="insertMessage" keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Chat">
+        insert into chat
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            from_id,to_id,message
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            #{from_id}, #{to_id},#{message}
+        </trim>;
+    </insert>
+
+    <select id="getMessage" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Chat">
+        SELECT *
+        FROM chat
+        WHERE from_id=#{from_id} and to_id=#{to_id}
+        UNION
+        SELECT *
+        FROM chat
+        WHERE from_id=#{to_id} and to_id=#{from_id}
+        ORDER BY created_time ASC;
+    </select>
+
+    <select id="getChatter" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        WHERE user.id in (
+            SELECT distinct(tmp_id)
+            FROM (
+                SELECT from_id as tmp_id,created_time
+                FROM chat
+                WHERE to_id=#{id}
+                UNION
+                SELECT to_id as tmp_id,created_time
+                FROM chat
+                WHERE from_id=#{id}
+                ORDER BY created_time DESC
+            ) as tmp
+        );
+    </select>
+
+    <select id="getLatestChat" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Chat">
+        SELECT *
+        FROM (
+            SELECT *
+            FROM chat
+            WHERE from_id=#{from_id} and to_id=#{to_id}
+            UNION
+            SELECT *
+            FROM chat
+            WHERE from_id=#{to_id} and to_id=#{from_id}
+            ORDER BY created_time DESC
+        ) as tmp LIMIT 1;
+    </select>
+
+
+</mapper>

@@ -1,5 +1,9 @@
 package com.mobilecourse.backend;
 
+import com.alibaba.fastjson.JSONObject;
+import com.mobilecourse.backend.dao.ChatDao;
+import com.mobilecourse.backend.model.Chat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.websocket.*;
@@ -11,6 +15,14 @@ import java.util.Hashtable;
 @ServerEndpoint("/websocket/{sid}")
 @Component
 public class WebSocketServer {
+
+    // 这里使用静态，让 service 属于类
+    private static ChatDao ChatMapper;
+    // 注入的时候，给类的 service 注入
+    @Autowired
+    public void setChatDao(ChatDao chatService) {
+        WebSocketServer.ChatMapper = chatService;
+    }
 
     public static Hashtable<String, WebSocketServer> getWebSocketTable() {
         return webSocketTable;
@@ -46,8 +58,22 @@ public class WebSocketServer {
 
     // 收到消息时候的处理
     @OnMessage
-    public void onMessage(String message, Session session) {
+    public void onMessage(String message, Session session) throws IOException {
+        JSONObject obj = JSONObject.parseObject(message);
+        String mes = (String) obj.get("message");
+        String to= obj.get("to")+"";
+        Chat c=new Chat();
+        c.setFrom_id(Integer.parseInt(sid));
+        c.setTo_id(Integer.parseInt(to));
+        c.setMessage(mes);
+        ChatMapper.insertMessage(c);
+        sendMessageTo(mes,to);
+    }
 
+
+    private void sendMessageTo(String mes, String to) {
+        if (webSocketTable.get(to)!=null )
+            webSocketTable.get(to).session.getAsyncRemote().sendText(mes);
     }
 
     @OnError
