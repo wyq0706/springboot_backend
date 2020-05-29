@@ -8,6 +8,7 @@ import com.mobilecourse.backend.model.Test;
 import com.mobilecourse.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -133,15 +134,21 @@ public class UserController extends CommonController {
     }
 
     @RequestMapping(value = "/update_icon", method = { RequestMethod.POST })
-    public String update_icon(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file) {
+    public String update_icon(HttpServletRequest request, @RequestParam(value = "file") MultipartFile file) throws FileNotFoundException {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             String id = String.valueOf(account.getId());
             if (!file.isEmpty()) {
                 String fileName = id + ".jpg";
-                String filePath = System.getProperty("user.dir")+"/src/main/resources/icon/"+fileName;
+                String filePath = System.getProperty("user.dir")+"/icon/"+fileName;
                 System.out.println(filePath);
                 try {
+                    File serverFile=new File(filePath);
+                    if(!serverFile.exists()) {
+                        //先得到文件的上级目录，并创建上级目录，在创建文件
+                        serverFile.getParentFile().mkdir();
+                    }
+                    //创建文件
                     file.transferTo(new File(filePath));
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -159,7 +166,7 @@ public class UserController extends CommonController {
     public void getIcon(HttpServletRequest request, @PathVariable(value = "id") String id, HttpServletResponse response) throws IOException{
         try {
             String fileName = id + ".jpg";
-            String address = System.getProperty("user.dir")+"/src/main/resources/icon/"+fileName;
+            String address = System.getProperty("user.dir")+"/icon/"+fileName;
             FileInputStream hFile=new FileInputStream(new File(address));
             int i=hFile.available();
             byte data[]=new byte[i];
