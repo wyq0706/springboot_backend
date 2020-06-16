@@ -20,7 +20,9 @@ public class User {
     private String grade;
 
     public String getSchool() {
-        return school;
+        if(school!=null){return school;}
+        else{return "";}
+
     }
 
     public void setSchool(String school) {
@@ -28,7 +30,10 @@ public class User {
     }
 
     public String getDepartment() {
-        return department;
+        if(department!=null) {
+            return department;
+        }
+        else{return "";}
     }
 
     public void setDepartment(String department) {
@@ -36,7 +41,10 @@ public class User {
     }
 
     public String getReal_name() {
-        return real_name;
+        if(real_name!=null) {
+            return real_name;
+        }
+        else{return "";}
     }
 
     public void setReal_name(String real_name) {
@@ -44,7 +52,10 @@ public class User {
     }
 
     public String getGrade() {
-        return grade;
+        if(grade!=null) {
+            return grade;
+        }
+        else{return "";}
     }
 
     public void setGrade(String grade) {
@@ -84,7 +95,10 @@ public class User {
     }
 
     public String getSignature() {
-        return signature;
+        if(signature!=null) {
+            return signature;
+        }
+        else{return "";}
     }
 
     public void setSignature(String signature) {
@@ -100,7 +114,10 @@ public class User {
     }
 
     public String getPersonal_info() {
-        return personal_info;
+        if(personal_info!=null) {
+            return personal_info;
+        }
+        else{return "";}
     }
 
     public void setPersonal_info(String personal_info) {

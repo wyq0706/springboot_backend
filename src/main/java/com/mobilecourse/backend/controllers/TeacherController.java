@@ -126,4 +126,31 @@ public class TeacherController extends CommonController {
         }
         return wrapperMsgArray("valid", "", jsonArray);
     }
+
+    @RequestMapping(value = "/get_my_project", method = { RequestMethod.GET })
+    public String get_my_project(HttpServletRequest request) {
+        User account = getUserFromSession(request);
+        if (account != null) {//如果不为空
+            JSONArray jsonArray = new JSONArray();
+            List<Project> list = TeacherMapper.getProById(account.getId());
+            for (Project project : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", project.getId());
+                jsonObject.put("title", project.getTitle());
+                jsonObject.put("description", project.getDescription());
+                jsonObject.put("department", account.getDepartment());
+                String name = account.getReal_name();
+                if (name != null && name.length() > 0) {
+                    jsonObject.put("teacher", account.getReal_name());
+                } else {
+                    jsonObject.put("teacher", account.getUsername());
+                }
+                jsonArray.add(jsonObject);
+            }
+
+            return wrapperMsgArray("valid", "", jsonArray);
+        } else {
+            return wrapperMsg("invalid", "未登录", null);
+        }
+    }
 }

@@ -20,4 +20,6 @@ public interface TeacherDao {
 
     List<User> getSignin(@Param("project_id") Integer i);
 
+    List<Project> getProById(@Param("id")Integer i);
+
 }

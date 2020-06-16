@@ -26,4 +26,10 @@ public interface StudentDao {
 
     void quitStar(@Param("project_id") Integer i, @Param("student_id") Integer j);
 
+    List<Project> getMyPro(@Param("id")Integer i);
+
+    List<Plan> getMyPlan(@Param("id")Integer i);
+
+    List<User> getUserById(@Param("id")Integer id);
+
 }

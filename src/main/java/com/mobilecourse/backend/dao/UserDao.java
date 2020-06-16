@@ -1,5 +1,6 @@
 package com.mobilecourse.backend.dao;
 
+import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -24,6 +25,7 @@ public interface UserDao {
     //获取用户
     List<User> getUser(@Param("username")String s, @Param("password")String t);
     List<User> getUserByName(@Param("username")String s);
+    List<User> getUserById(@Param("id")Integer id);
 
     void updateUsername(@Param("username")String s, String newName);
 
@@ -50,6 +52,10 @@ public interface UserDao {
     Integer getStarNum(@Param("id")Integer i);
 
     List<Project> getStar(@Param("id")Integer i);
+
+    List<Project> getProById(@Param("id")Integer i);
+
+    List<Plan> getPlanById(@Param("id")Integer i);
 
     int getProjectIfStarred(@Param("project_id")Integer i,@Param("student_id")Integer i2);
 

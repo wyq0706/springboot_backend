@@ -38,6 +38,12 @@
         where username=#{username}
     </select>
 
+    <select id="getUserById" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        where id=#{id}
+    </select>
+
     <update id="updateUsername">
         UPDATE user
         SET username=#{newName}
@@ -162,6 +168,21 @@
         FROM rela_project_star
         WHERE rela_project_star.student_id=#{id});
     </select>
+
+    <select id="getProById" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Project">
+        SELECT *
+        FROM project.project
+        WHERE project.project.teacher_id =#{id};
+    </select>
+
+    <select id="getPlanById" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Plan">
+        SELECT *
+        FROM project.plan
+        WHERE project.plan.student_id =#{id};
+    </select>
+
+
+
 
     <select id="getProjectIfStarred"  resultType="java.lang.Integer">
         SELECT count(*)

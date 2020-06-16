@@ -154,4 +154,62 @@ public class StudentController extends CommonController {
         StudentMapper.quitStar(project_id,account.getId());
         return wrapperMsg("valid", "成功取消关注", null);
     }
+
+    @RequestMapping(value = "/get_my_project", method = { RequestMethod.GET })
+    public String get_my_project(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            JSONArray jsonArray = new JSONArray();
+            List<Project> list = StudentMapper.getMyPro(account.getId());
+            for (Project project : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",project.getId());
+                List<User> teacher = StudentMapper.getUserById(project.getTeacher_id());
+                User otherUser = teacher.get(0);
+
+                jsonObject.put("title",project.getTitle());
+                jsonObject.put("description",project.getDescription());
+                jsonObject.put("department",otherUser.getDepartment());
+                String name = otherUser.getReal_name();
+                if(name!=null&& name.length()>0) {
+                    jsonObject.put("teacher", otherUser.getReal_name());
+                }
+                else{
+                    jsonObject.put("teacher",otherUser.getUsername());
+                }
+                jsonArray.add(jsonObject);
+            }
+
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+    @RequestMapping(value = "/get_my_plan", method = { RequestMethod.GET })
+    public String get_my_plan(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            JSONArray jsonArray = new JSONArray();
+            List<Plan> list = StudentMapper.getMyPlan(account.getId());
+            for (Plan plan : list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", plan.getId());
+                jsonObject.put("title", plan.getTitle());
+                jsonObject.put("description", plan.getDescription());
+                jsonObject.put("department", account.getDepartment());
+                String name = account.getReal_name();
+                if (name != null && name.length() > 0) {
+                    jsonObject.put("student", account.getReal_name());
+                } else {
+                    jsonObject.put("student", account.getUsername());
+                }
+                jsonArray.add(jsonObject);
+            }
+
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
 }

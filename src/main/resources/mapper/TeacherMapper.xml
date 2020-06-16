@@ -39,4 +39,10 @@
         WHERE project_id=#{project_id});
     </select>
 
+    <select id="getProById" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Project">
+        SELECT *
+        FROM project.project
+        WHERE project.project.teacher_id =#{id};
+    </select>
+
 </mapper>

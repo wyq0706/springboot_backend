@@ -3,6 +3,7 @@ package com.mobilecourse.backend.controllers;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.dao.UserDao;
+import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.Test;
 import com.mobilecourse.backend.model.User;
@@ -56,8 +57,11 @@ public class UserController extends CommonController {
                 //加入session
                 List<User> s = UserMapper.getUser(username, password);
                 putInfoToSession(request, "sid", s.get(0));
+                boolean type=s.get(0).isType();
+                JSONObject object=new JSONObject();
+                object.put("type",type);
+                return wrapperMsg("valid","成功登录",object);
             }
-        return wrapperMsg("valid","成功登录",null);
     }
 
     @RequestMapping(value = "/logout", method = { RequestMethod.POST })
@@ -105,13 +109,15 @@ public class UserController extends CommonController {
     }
 
     @RequestMapping(value = "/update_password", method = { RequestMethod.POST })
-    public String update_password(HttpServletRequest request, @RequestParam(value = "password")String password) {
+    public String update_password(HttpServletRequest request, @RequestParam(value = "old_password")String old_password,@RequestParam(value = "new_password")String new_password) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             String username = account.getUsername();
-            System.out.println(username);
-            UserMapper.updatePassword(username,password);
-            account.setPassword(password);
+            if(!account.getPassword().equals(old_password)){
+                return wrapperMsg("invalid","密码错误！",null);
+            }
+            UserMapper.updatePassword(username,new_password);
+            account.setPassword(new_password);
             removeInfoFromSession(request,"sid");
             putInfoToSession(request, "sid", account);
             return wrapperMsg("valid","成功更新",null);
@@ -196,7 +202,7 @@ public class UserController extends CommonController {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type",s.isType());
                 jsonObject.put("id", s.getId());
-                jsonObject.put("name", s.getUsername());
+                jsonObject.put("username", s.getUsername());
                 jsonArray.add(jsonObject);
             }
             return wrapperMsgArray("valid","",jsonArray);
@@ -215,7 +221,7 @@ public class UserController extends CommonController {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type",s.isType());
                 jsonObject.put("id", s.getId());
-                jsonObject.put("name", s.getUsername());
+                jsonObject.put("username", s.getUsername());
                 jsonArray.add(jsonObject);
             }
             return wrapperMsgArray("valid","",jsonArray);
@@ -269,11 +275,14 @@ public class UserController extends CommonController {
             int id = account.getId();
             String username = account.getUsername();
             Boolean type = account.isType();
-            String icon_url = "";
+            String icon_url = "http://47.94.145.111:8080/api/user/getIcon/"+String.valueOf(id);
             Boolean verification = account.isVerification();
             String signature = account.getSignature();
             String person_info = account.getPersonal_info();
-            String veri_info = account.getReal_name()+" "+account.getSchool()+account.getDepartment()+account.getGrade();
+            String real_name = account.getReal_name();
+            String school =  account.getSchool();
+            String department =  account.getDepartment();
+            String grade = account.getGrade();
             Integer follow_num = UserMapper.getFollowNum(id);
             if(follow_num==null) follow_num = 0;
             Integer followee_num = UserMapper.getFollowedNum(id);
@@ -292,7 +301,11 @@ public class UserController extends CommonController {
             jsonObject.put("verification",verification);
             jsonObject.put("signature",signature);
             jsonObject.put("personal_info",person_info);
-            jsonObject.put("veri_info",veri_info);
+            jsonObject.put("id",id);
+            jsonObject.put("real_name",real_name);
+            jsonObject.put("school",school);
+            jsonObject.put("department",department);
+            jsonObject.put("grade",grade);
             jsonObject.put("follow_num",follow_num);
             jsonObject.put("followee_num",followee_num);
             jsonObject.put("star_or_pro_num",star_or_pro_num);
@@ -333,29 +346,34 @@ public class UserController extends CommonController {
         }
     }
 
-    @RequestMapping(value = "/user_info",method = {RequestMethod.POST})
-    public String userInfo(HttpServletRequest request,
-                           @RequestParam(value = "username")String otheruser) {
+    @RequestMapping(value = "/user_info/{id}",method = {RequestMethod.GET})
+    public String userInfo(HttpServletRequest request,@PathVariable(value = "id") Integer id) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             JSONObject jsonObject = new JSONObject();
-            List<User> s = UserMapper.getUserByName(otheruser);
+            List<User> s = UserMapper.getUserById(id);
             if(s==null){return wrapperMsg("invalid","没有该用户名的用户",null);}
             User otherUser = s.get(0);
             String username = otherUser.getUsername();
             Boolean type = otherUser.isType();
-            String icon_url = "";
+            String icon_url = "http://47.94.145.111:8080/api/user/getIcon/"+String.valueOf(id);
             Boolean verification = otherUser.isVerification();
             String signature = otherUser.getSignature();
             String person_info = otherUser.getPersonal_info();
-            String veri_info = otherUser.getReal_name()+" "+otherUser.getSchool()+otherUser.getDepartment()+account.getGrade();
+            String real_name = otherUser.getReal_name();
+            String school =  otherUser.getSchool();
+            String department =  otherUser.getDepartment();
+            String grade = otherUser.getGrade();
             jsonObject.put("icon_url",icon_url);
             jsonObject.put("username",username);
             jsonObject.put("type",type);
             jsonObject.put("verification",verification);
             jsonObject.put("signature",signature);
             jsonObject.put("personal_info",person_info);
-            jsonObject.put("veri_info",veri_info);
+            jsonObject.put("real_name",real_name);
+            jsonObject.put("department",department);
+            jsonObject.put("grade",grade);
+            jsonObject.put("school",school);
             return wrapperMsg("valid","",jsonObject);
         }else {
             return wrapperMsg("invalid","未成功验证",null);
@@ -371,11 +389,71 @@ public class UserController extends CommonController {
             for (Project s : list) {
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id",s.getId());
+                List<User> teacher = UserMapper.getUserById(s.getTeacher_id());
+                User otherUser = teacher.get(0);
+                jsonObject.put("id",s.getId());
                 jsonObject.put("title",s.getTitle());
                 jsonObject.put("description",s.getDescription());
-                jsonObject.put("requirement",s.getRequirement());
-                jsonObject.put("teacher",s.getTeacher());
+                jsonObject.put("department",otherUser.getDepartment());
+                String name = otherUser.getReal_name();
+                if(name!=null&& name.length()>0) {
+                    jsonObject.put("teacher", otherUser.getReal_name());
+                }
+                else{
+                    jsonObject.put("teacher",otherUser.getUsername());
+                }
                 jsonArray.add(jsonObject);
+            }
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+    @RequestMapping(value = "/get_plan_or_pro/{id}", method = { RequestMethod.GET })
+    public String getPlanOrPro(HttpServletRequest request,@PathVariable(value = "id") Integer id) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            JSONArray jsonArray = new JSONArray();
+            List<User> s = UserMapper.getUserById(id);
+            if(s==null){return wrapperMsg("invalid","没有该用户名的用户",null);}
+            User otherUser = s.get(0);
+            if(otherUser.isType()){
+                List<Project> list=UserMapper.getProById(id);
+                for (Project project : list) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id",project.getId());
+                    jsonObject.put("title",project.getTitle());
+                    jsonObject.put("description",project.getDescription());
+                    jsonObject.put("department",otherUser.getDepartment());
+                    String name = otherUser.getReal_name();
+                    if(name!=null&& name.length()>0) {
+                        jsonObject.put("name", otherUser.getReal_name());
+                    }
+                    else{
+                        jsonObject.put("name",otherUser.getUsername());
+                    }
+                    jsonArray.add(jsonObject);
+                }
+            }
+            else{
+                List<Plan> list=UserMapper.getPlanById(id);
+                for (Plan plan : list) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id",plan.getId());
+                    jsonObject.put("title",plan.getTitle());
+                    jsonObject.put("description",plan.getDescription());
+                    jsonObject.put("department",otherUser.getDepartment());
+                    String name = otherUser.getReal_name();
+                    if(name!=null&& name.length()>0) {
+                        jsonObject.put("name", otherUser.getReal_name());
+                    }
+                    else{
+                        jsonObject.put("name",otherUser.getUsername());
+                    }
+                    jsonArray.add(jsonObject);
+                }
+
             }
             return wrapperMsgArray("valid","",jsonArray);
         }else {

@@ -59,4 +59,24 @@
         where id=#{id};
     </delete>
 
+    <select id="getMyPro" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Project">
+        SELECT *
+        FROM project.project
+        WHERE project.project.id in (
+        SELECT project_id as id
+        FROM rela_project_signin
+        WHERE rela_project_signin.student_id=#{id});
+    </select>
+
+    <select id="getMyPlan" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Plan">
+        SELECT *
+        FROM project.plan
+        WHERE project.plan.student_id =#{id};
+    </select>
+
+    <select id="getUserById" resultType="com.mobilecourse.backend.model.User">
+        SELECT *
+        FROM user
+        where id=#{id}
+    </select>
 </mapper>
