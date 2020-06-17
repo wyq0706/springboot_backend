@@ -64,7 +64,7 @@ public class UserController extends CommonController {
             }
     }
 
-    @RequestMapping(value = "/logout", method = { RequestMethod.POST })
+    @RequestMapping(value = "/logout", method = { RequestMethod.GET })
     public String logout(HttpServletRequest request) {
             HttpSession session=request.getSession();
             Object account=session.getAttribute("sid");
