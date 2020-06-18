@@ -26,7 +26,7 @@ public class ChatController extends CommonController {
     @Autowired
     private ChatDao ChatMapper;
 
-    @RequestMapping(value = "/get_chat_content", method = { RequestMethod.GET })
+    @RequestMapping(value = "/get_chat_content/{id}", method = { RequestMethod.GET })
     public String get_chat_content(HttpServletRequest request, @PathVariable(value = "id")Integer id) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空

@@ -95,7 +95,7 @@ public class TeacherController extends CommonController {
         return wrapperMsg("valid", "成功删除", null);
     }
 
-    @RequestMapping(value = "/get_signin_student", method = { RequestMethod.GET })
+    @RequestMapping(value = "/get_signin_student/{id}", method = { RequestMethod.GET })
     public String get_signin_student(HttpServletRequest request,@PathVariable(value="id")Integer id) {
         HttpSession session=request.getSession();
         User account=(User)session.getAttribute("sid");
