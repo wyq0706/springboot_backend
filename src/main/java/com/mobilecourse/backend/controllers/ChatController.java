@@ -9,10 +9,7 @@ import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,7 +27,7 @@ public class ChatController extends CommonController {
     private ChatDao ChatMapper;
 
     @RequestMapping(value = "/get_chat_content", method = { RequestMethod.GET })
-    public String get_chat_content(HttpServletRequest request, @RequestParam(value = "id")Integer id) {
+    public String get_chat_content(HttpServletRequest request, @PathVariable(value = "id")Integer id) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             List<Chat> list= ChatMapper.getMessage(id,account.getId());

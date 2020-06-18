@@ -352,8 +352,8 @@ public class UserController extends CommonController {
         }
     }
 
-    @RequestMapping(value = "/project_info",method = {RequestMethod.GET})
-    public String project_info(HttpServletRequest request, @RequestParam(value = "id")Integer project_id) {
+    @RequestMapping(value = "/project_info/{id}",method = {RequestMethod.GET})
+    public String project_info(HttpServletRequest request, @PathVariable(value = "id")Integer project_id) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             Project s=UserMapper.getSingleProject(project_id);
