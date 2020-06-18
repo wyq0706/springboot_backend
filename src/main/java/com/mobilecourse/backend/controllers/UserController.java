@@ -183,10 +183,23 @@ public class UserController extends CommonController {
             toClient.write(data);
             toClient.close();
         }catch (IOException e){
-            PrintWriter toClient=response.getWriter();
-            response.setContentType("text/html;charset=gb2312");
-            toClient.write("无法打开图片");
-            toClient.close();
+            try {
+                String address = System.getProperty("user.dir")+"/icon/default.jpg";
+                FileInputStream hFile=new FileInputStream(new File(address));
+                int i=hFile.available();
+                byte data[]=new byte[i];
+                hFile.read(data);
+                hFile.close();
+                response.setContentType("image/jpeg");
+                OutputStream toClient=response.getOutputStream();
+                toClient.write(data);
+                toClient.close();
+            }catch (IOException a){
+                PrintWriter toClient=response.getWriter();
+                response.setContentType("text/html;charset=gb2312");
+                toClient.write("无法打开图片");
+                toClient.close();
+            }
         }
 
     }
@@ -269,10 +282,11 @@ public class UserController extends CommonController {
 
     @RequestMapping(value = "/home",method = {RequestMethod.GET})
     public String home(HttpServletRequest request) {
-        User account=getUserFromSession(request);
-        if(account!=null) {//如果不为空
+        User user=getUserFromSession(request);
+        if(user!=null) {//如果不为空
             JSONObject jsonObject = new JSONObject();
-            int id = account.getId();
+            int id = user.getId();
+            User account=UserMapper.getUserById(id).get(0);
             String username = account.getUsername();
             Boolean type = account.isType();
             String icon_url = "http://47.94.145.111:8080/api/user/getIcon/"+String.valueOf(id);
