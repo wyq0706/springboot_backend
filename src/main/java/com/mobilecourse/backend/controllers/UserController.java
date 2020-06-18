@@ -401,7 +401,7 @@ public class UserController extends CommonController {
             String school =  otherUser.getSchool();
             String department =  otherUser.getDepartment();
             String grade = otherUser.getGrade();
-            boolean relation = (UserMapper.ifFollow(account.getId(),otherUser.getId())>=1);
+            boolean relation = (UserMapper.ifFollow(id,account.getId())>=1);
             jsonObject.put("icon_url",icon_url);
             jsonObject.put("username",username);
             jsonObject.put("type",type);
