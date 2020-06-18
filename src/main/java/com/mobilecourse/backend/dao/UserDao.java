@@ -19,6 +19,8 @@ public interface UserDao {
     //检查用户名是否重复
     int ifUsernameDuplicate(String s);
 
+    int ifFollow(@Param("followed_id")Integer followed_id, @Param("follower_id")Integer follower_id);
+
     //用户名密码是否存在且正确
     int ifUserExists(@Param("username")String s, @Param("password")String t);
 
@@ -38,6 +40,7 @@ public interface UserDao {
     List<Project> getProjects();
 
     void goFollow(@Param("followed_id")Integer i,@Param("follower_id")Integer j);
+    void cancelFollow(@Param("followed_id")Integer i,@Param("follower_id")Integer j);
 
     List<User> getFollow(@Param("id")Integer i);
 

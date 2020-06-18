@@ -204,6 +204,29 @@ public class UserController extends CommonController {
 
     }
 
+    @RequestMapping(value = "/go_follow", method = { RequestMethod.POST })
+    public String go_follow(HttpServletRequest request, @RequestParam(value = "user_id")Integer user_id) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            if(user_id==account.getId()){return wrapperMsg("invalid","不可以追踪自己！",null);}
+            UserMapper.goFollow(user_id,account.getId());
+            return wrapperMsg("valid","成功追踪",null);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
+    @RequestMapping(value = "/cancel_follow", method = { RequestMethod.POST })
+    public String cancel_follow(HttpServletRequest request, @RequestParam(value = "user_id")Integer user_id) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            UserMapper.cancelFollow(user_id,account.getId());
+            return wrapperMsg("valid","取消追踪",null);
+        }else {
+            return wrapperMsg("invalid","未登录",null);
+        }
+    }
+
 
     @RequestMapping(value = "/get_follower", method = { RequestMethod.GET })
     public String get_follow(HttpServletRequest request) {
@@ -378,6 +401,7 @@ public class UserController extends CommonController {
             String school =  otherUser.getSchool();
             String department =  otherUser.getDepartment();
             String grade = otherUser.getGrade();
+            boolean relation = (UserMapper.ifFollow(account.getId(),otherUser.getId())>=1);
             jsonObject.put("icon_url",icon_url);
             jsonObject.put("username",username);
             jsonObject.put("type",type);
@@ -388,6 +412,7 @@ public class UserController extends CommonController {
             jsonObject.put("department",department);
             jsonObject.put("grade",grade);
             jsonObject.put("school",school);
+            jsonObject.put("relation",relation);
             return wrapperMsg("valid","",jsonObject);
         }else {
             return wrapperMsg("invalid","未成功验证",null);
