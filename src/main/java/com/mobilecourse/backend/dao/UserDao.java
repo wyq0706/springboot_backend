@@ -66,5 +66,7 @@ public interface UserDao {
 
     Project getSingleProject(@Param("project_id")Integer i);
 
+    List<Plan> getSinglePlan(@Param("plan_id")Integer i);
+
     void verification(@Param("username")String s, String realname,String school,String department,String grade);
 }

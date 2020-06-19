@@ -359,7 +359,6 @@ public class UserController extends CommonController {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             Project s=UserMapper.getSingleProject(project_id);
-            JSONArray jsonArray = new JSONArray();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("project_id", s.getId());
             jsonObject.put("project_title", s.getTitle());
@@ -370,8 +369,8 @@ public class UserController extends CommonController {
             }else {
                 jsonObject.put("department", s.getTeacher().getDepartment());
             }
+            jsonObject.put("description",s.getDescription());
             jsonObject.put("requirement",s.getRequirement());
-            jsonObject.put("description",s.getRequirement());
             jsonObject.put("research_direction",s.getResearch_direction());
 
             boolean ifStarred = UserMapper.getProjectIfStarred(project_id, account.getId())>0;
@@ -384,6 +383,38 @@ public class UserController extends CommonController {
             return wrapperMsg("invalid","未成功验证",null);
         }
     }
+
+    @RequestMapping(value = "/plan_info/{id}",method = {RequestMethod.GET})
+    public String plan_info(HttpServletRequest request, @PathVariable(value = "id")Integer plan_id) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            try {
+                List<Plan> s=UserMapper.getSinglePlan(plan_id);
+                Plan plan=s.get(0);
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("plan_title", plan.getTitle());
+                jsonObject.put("student_id",plan.getStudent_id());
+                jsonObject.put("type",plan.getType());
+                jsonObject.put("plan_direction",plan.getPlan_direction());
+                List<User> users=UserMapper.getUserById(plan.getStudent_id());
+                if(users==null){
+                    jsonObject.put("department","");
+                }else {
+                    jsonObject.put("department", users.get(0).getDepartment());
+                }
+                jsonObject.put("description",plan.getDescription());
+
+                return wrapperMsg("valid","",jsonObject);
+            }
+            catch (Exception e){
+                return wrapperMsg("invalid","Plan ID不存在！",null);
+            }
+
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
 
     @RequestMapping(value = "/user_info/{id}",method = {RequestMethod.GET})
     public String userInfo(HttpServletRequest request,@PathVariable(value = "id") Integer id) {

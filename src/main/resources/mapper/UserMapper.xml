@@ -222,6 +222,12 @@
         WHERE project.id=#{project_id} and user.id=project.teacher_id;
     </select>
 
+    <select id="getSinglePlan"  resultType="com.mobilecourse.backend.model.Plan">
+        SELECT *
+        FROM project.plan
+        WHERE plan.id=#{plan_id}
+    </select>
+
 
 
 </mapper>
