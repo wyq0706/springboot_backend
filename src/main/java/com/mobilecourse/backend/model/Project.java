@@ -29,7 +29,10 @@ public class Project {
     }
 
     public String getResearch_direction() {
-        return research_direction;
+        if(research_direction!=null) {
+            return research_direction;
+        }
+        else{return "";}
     }
 
     public void setResearch_direction(String research_direction) {
@@ -37,7 +40,10 @@ public class Project {
     }
 
     public String getRequirement() {
-        return requirement;
+        if(requirement!=null) {
+            return requirement;
+        }
+        else{return "";}
     }
 
     public void setRequirement(String requirement) {
@@ -45,7 +51,10 @@ public class Project {
     }
 
     public String getDescription() {
-        return description;
+        if(description!=null) {
+            return description;
+        }
+        else{return "";}
     }
 
     public void setDescription(String description) {

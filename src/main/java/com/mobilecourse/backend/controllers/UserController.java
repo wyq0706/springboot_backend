@@ -60,6 +60,7 @@ public class UserController extends CommonController {
                 boolean type=s.get(0).isType();
                 JSONObject object=new JSONObject();
                 object.put("type",type);
+                object.put("user_id",s.get(0).getId());
                 return wrapperMsg("valid","成功登录",object);
             }
     }
@@ -282,6 +283,7 @@ public class UserController extends CommonController {
                 jsonObject.put("department", s.getTeacher().getDepartment());
             }
             jsonObject.put("requirement",s.getRequirement());
+            jsonObject.put("researchDirection",s.getResearch_direction());
             jsonArray.add(jsonObject);
         }
         return wrapperMsgArray("valid","",jsonArray);

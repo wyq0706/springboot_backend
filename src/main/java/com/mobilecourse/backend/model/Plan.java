@@ -29,7 +29,10 @@ public class Plan {
     }
 
     public String getPlan_direction() {
-        return plan_direction;
+        if(plan_direction!=null) {
+            return plan_direction;
+        }
+        else{return "";}
     }
 
     public void setPlan_direction(String plan_direction) {
@@ -45,7 +48,10 @@ public class Plan {
     }
 
     public String getDescription() {
-        return description;
+        if(description!=null) {
+            return description;
+        }
+        else{return "";}
     }
 
     public void setDescription(String description) {
