@@ -28,6 +28,10 @@
     <delete id="cancelProject" parameterType="java.lang.Integer">
         delete from project
         where id=#{id};
+        delete from rela_project_signin
+        where project_id=#{id};
+        delete from rela_project_star
+        where project_id=#{id};
     </delete>
 
     <select id="getSignin" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.User">
