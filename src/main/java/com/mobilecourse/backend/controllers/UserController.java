@@ -500,6 +500,7 @@ public class UserController extends CommonController {
                     jsonObject.put("title",project.getTitle());
                     jsonObject.put("description",project.getDescription());
                     jsonObject.put("department",otherUser.getDepartment());
+                    jsonObject.put("type","project");
                     String name = otherUser.getReal_name();
                     if(name!=null&& name.length()>0) {
                         jsonObject.put("name", otherUser.getReal_name());
@@ -518,6 +519,7 @@ public class UserController extends CommonController {
                     jsonObject.put("title",plan.getTitle());
                     jsonObject.put("description",plan.getDescription());
                     jsonObject.put("department",otherUser.getDepartment());
+                    jsonObject.put("type","plan");
                     String name = otherUser.getReal_name();
                     if(name!=null&& name.length()>0) {
                         jsonObject.put("name", otherUser.getReal_name());
