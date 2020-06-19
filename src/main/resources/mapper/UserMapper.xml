@@ -217,7 +217,8 @@
         project.requirement,
         project.id as project_id,
         project.description as description,
-        project.research_direction as research_direction
+        project.research_direction as research_direction,
+        project.created_time as created_time
         FROM project.user,project.project
         WHERE project.id=#{project_id} and user.id=project.teacher_id;
     </select>

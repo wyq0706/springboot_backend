@@ -371,6 +371,7 @@ public class UserController extends CommonController {
             }
             jsonObject.put("description",s.getDescription());
             jsonObject.put("requirement",s.getRequirement());
+            jsonObject.put("createTime",s.getCreated_time());
             jsonObject.put("research_direction",s.getResearch_direction());
 
             boolean ifStarred = UserMapper.getProjectIfStarred(project_id, account.getId())>0;
@@ -403,6 +404,7 @@ public class UserController extends CommonController {
                     jsonObject.put("department", users.get(0).getDepartment());
                 }
                 jsonObject.put("description",plan.getDescription());
+                jsonObject.put("createTime",plan.getCreated_time());
 
                 return wrapperMsg("valid","",jsonObject);
             }

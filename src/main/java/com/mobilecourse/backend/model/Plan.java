@@ -1,5 +1,7 @@
 package com.mobilecourse.backend.model;
 
+import java.util.Date;
+
 // 此类中的类型必须和数据库中table的列类型一一对应，否则会出现问题
 public class Plan {
     // getter和setter可以使用idea自带的功能生成，右键点击->Generate->Getter and Setter即可自动生成
@@ -11,6 +13,11 @@ public class Plan {
     private String type;
     private String description;
     private int student_id;
+    private Date created_time;
+
+    public Date getCreated_time() {
+        return created_time;
+    }
 
     public String getTitle() {
         return title;
