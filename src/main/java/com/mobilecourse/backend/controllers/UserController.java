@@ -7,8 +7,11 @@ import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.Test;
 import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.service.EsProductService;
+import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.data.domain.Page;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +31,9 @@ public class UserController extends CommonController {
     @Autowired
     private UserDao UserMapper;
 
+    @Autowired
+    private EsProductService esService;
+
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public String register(@RequestParam(value = "username")String username,
                          @RequestParam(value = "password")String password,
@@ -40,6 +46,25 @@ public class UserController extends CommonController {
             s.setPassword(password);
             s.setType(type);
             UserMapper.insert(s);
+
+            // elasticsearch storage
+            EsProduct esp=new EsProduct();
+            //防止不同类型的相同id碰撞
+            if(type) {
+                esp.setId(s.getId() * 4 -2);
+                esp.setType("teacher");
+            }else{
+                esp.setId(s.getId() * 4 -3);
+                esp.setType("student");
+            }
+            esp.setDepartment("");
+            esp.setItem_id(s.getId());
+            esp.setUser_id(s.getId());
+            esp.setKeywords("");
+            esp.setName(username);
+            esp.setSubTitle("");
+            // 存储文档到es中
+            esService.create(esp);
             return wrapperMsg("valid","成功注册",null);
     }
 
@@ -133,6 +158,7 @@ public class UserController extends CommonController {
         if(account!=null) {//如果不为空
             String username = account.getUsername();
             System.out.println(username);
+            account.setPersonal_info(personal_info);
             UserMapper.updatePersonalInfo(username,personal_info);
             return wrapperMsg("valid","成功更新",null);
         }else {
@@ -298,8 +324,41 @@ public class UserController extends CommonController {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             String username = account.getUsername();
+
+            // elasticsearch需要-->减少一次数据库查询，详见TeacherController.upload_recruit
+            account.setDepartment(department);
+            account.setReal_name(realname);
+
             UserMapper.verification(username,realname,school,department,grade);
             return wrapperMsg("valid","成功验证",null);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
+    @RequestMapping(value = "/search",method = {RequestMethod.POST})
+    public String search(HttpServletRequest request,
+                               @RequestParam(value = "key_word")String keyword,
+                               @RequestParam(value = "type")String type) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            Page<EsProduct> esp_page=esService.search(keyword,0,10);
+            List<EsProduct> esp_list=esp_page.getContent();
+            JSONArray jsonArray = new JSONArray();
+            boolean ifAll=type.equals("All");
+            for (EsProduct s : esp_list) {
+                if(ifAll||type.equals(s.getType())) {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("type", s.getType());
+                    jsonObject.put("id", s.getItem_id());
+                    jsonObject.put("description", s.getSubTitle());
+                    jsonObject.put("title", s.getName());
+                    jsonObject.put("name", s.getReal_name());
+                    jsonObject.put("department", s.getDepartment());
+                    jsonArray.add(jsonObject);
+                }
+            }
+            return wrapperMsgArray("valid","成功验证",jsonArray);
         }else {
             return wrapperMsg("invalid","未成功验证",null);
         }

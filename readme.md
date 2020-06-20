@@ -1,6 +1,6 @@
 可在application.properties中修改本地mysql配置
 
-mysql建表：
+###mysql建表语句
 ```
 create database project character set utf8
 
@@ -42,3 +42,21 @@ message varchar(100) not null,
 created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 primary key (id));
 ```
+
+### elasticsearch配置
+####依赖版本
+elasticsearch-6.2.2
+elasticsearch-analysis-ik-6.2.2 中文分词插件
+####安装说明
+* windows
+    * 下载Elasticsearch6.2.2的zip包，并解压到指定目录，下载地址：https://www.elastic.co/cn/downloads/past-releases/elasticsearch-6-2-2
+    * 安装中文分词插件，在elasticsearch-6.2.2\bin目录下执行以下命令：
+        ```
+      elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.2/elasticsearch-analysis-ik-6.2.2.zip
+        ```
+    * 运行bin目录下的elasticsearch.bat启动Elasticsearch
+    * 打开http://localhost:9200看到elasticsearch的配置文字表明安装成功
+    
+    
+####可参考学习资料
+* https://juejin.im/post/5cfba3e9f265da1b614fea60#heading-9

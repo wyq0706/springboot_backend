@@ -7,6 +7,8 @@ import com.mobilecourse.backend.dao.UserDao;
 import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
+import com.mobilecourse.backend.service.EsProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,9 @@ public class StudentController extends CommonController {
 
     @Autowired
     private StudentDao StudentMapper;
+
+    @Autowired
+    private EsProductService esService;
 
     @RequestMapping(value = "/sign_in", method = { RequestMethod.POST })
     public String go_singin(HttpServletRequest request, @RequestParam(value = "project_id")Integer project_id) {
@@ -72,6 +77,21 @@ public class StudentController extends CommonController {
         s.setDescription(description);
         s.setStudent_id(account.getId());
         StudentMapper.uploadPlan(s);
+
+        // elasticsearch storage
+        EsProduct esp=new EsProduct();
+        //防止不同类型的相同id碰撞
+        esp.setId(s.getId()*4-1);
+        esp.setDepartment(account.getDepartment());
+        esp.setItem_id(s.getId());
+        esp.setUser_id(s.getStudent_id());
+        esp.setType("plan");
+        esp.setKeywords(account.getReal_name());
+        esp.setName(s.getTitle());
+        esp.setSubTitle(s.getDescription());
+        // 存储文档到es中
+        esService.create(esp);
+
         JSONObject wrapperMsg = new JSONObject();
         wrapperMsg.put("plan_id", s.getId());
         return wrapperMsg("valid","成功创建",wrapperMsg);
