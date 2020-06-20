@@ -10,8 +10,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 /**
- * 搜索中的商品信息
- * Created by macro on 2018/6/19.
+ * 搜索信息
  */
 @Document(indexName = "pms", type = "product",shards = 1,replicas = 0)
 public class EsProduct implements Serializable {
@@ -19,16 +18,16 @@ public class EsProduct implements Serializable {
     @Id
     private int id;
     private int item_id;
-    @Field(type = FieldType.Keyword)
+
     private String type;
     @Field(type = FieldType.Keyword)
     private String department;
     private int user_id;
     @Field(type = FieldType.Keyword)
     private String real_name;
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)
+    @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
     private String name;
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)
+    @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
     private String subTitle;
     @Field(analyzer = "ik_max_word",type = FieldType.Text)
     private String keywords;

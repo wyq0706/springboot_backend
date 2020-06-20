@@ -4,6 +4,8 @@ import com.mobilecourse.backend.dao.EsDao;
 import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
 import com.mobilecourse.backend.nosql.elasticsearch.repository.EsProductRepository;
 import com.mobilecourse.backend.service.EsProductService;
+import com.sun.jna.Library;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,19 +31,6 @@ public class EsProductServiceImpl implements EsProductService {
     @Autowired
     private EsProductRepository productRepository;
 
-//    @Override
-//    public int importAll() {
-//        List<EsProduct> esProductList = productDao.getAllEsProductList(null);
-//        Iterable<EsProduct> esProductIterable = productRepository.saveAll(esProductList);
-//        Iterator<EsProduct> iterator = esProductIterable.iterator();
-//        int result = 0;
-//        while (iterator.hasNext()) {
-//            result++;
-//            iterator.next();
-//        }
-//        return result;
-//    }
-
     @Override
     public EsProduct get(int id) {
         EsProduct esp=productRepository.queryProductById(id);
@@ -53,11 +42,6 @@ public class EsProductServiceImpl implements EsProductService {
         productRepository.deleteById(id);
     }
 
-//    @Override
-//    public Page<EsProduct> getRelatedItems(int id) {
-//        Page<EsProduct> esp=productRepository.delete(id);
-//        return esp;
-//    }
 
     @Override
     public EsProduct create(EsProduct esp) {
@@ -66,23 +50,14 @@ public class EsProductServiceImpl implements EsProductService {
         return result;
     }
 
-//    @Override
-//    public void get(List<Integer> ids) {
-//        if (!CollectionUtils.isEmpty(ids)) {
-//            List<EsProduct> esProductList = new ArrayList<>();
-//            for (int id : ids) {
-//                EsProduct esProduct = new EsProduct();
-//                esProduct.setId(id);
-//                esProductList.add(esProduct);
-//            }
-//            productRepository.deleteAll(esProductList);
-//        }
-//    }
 
     @Override
-    public Page<EsProduct> search(String keyword, Integer pageNum, Integer pageSize) {
-        Pageable pageable = PageRequest.of(pageNum, pageSize);
-        return productRepository.findByNameOrSubTitleOrKeywords(keyword, keyword, keyword, pageable);
+    public Iterable<EsProduct> search(String keyword, Integer pageNum, Integer pageSize) {
+        QueryStringQueryBuilder builder = new QueryStringQueryBuilder(keyword);
+        Iterable<EsProduct> search = productRepository.search(builder);
+        return search;
+//        Pageable pageable = PageRequest.of(pageNum, pageSize);
+//        return productRepository.findByNameOrSubTitleOrKeywords(keyword, keyword, keyword, pageable);
     }
 
 }

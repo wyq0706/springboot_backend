@@ -1,6 +1,7 @@
 package com.mobilecourse.backend.service;
 
 import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
+import org.elasticsearch.search.aggregations.metrics.percentiles.hdr.InternalHDRPercentiles;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -10,20 +11,11 @@ import java.util.List;
  * Created by macro on 2018/6/19.
  */
 public interface EsProductService {
-//    /**
-//     * 从数据库中导入所有到ES
-//     */
-//    int importAll();
 
     /**
      * 根据id获取用户
      */
     EsProduct get(int id);
-
-//    /**
-//     * 根据用户id获取项目
-//     */
-//    Page<EsProduct> getRelatedItems(int id);
 
     /**
      * 创建
@@ -35,16 +27,10 @@ public interface EsProductService {
      */
     void delete(Integer Id);
 
-//    /**
-//     * 批量删除
-//     */
-//    void delete(List<Integer> ids);
-
     /**
      * 根据关键字搜索名称或者副标题
      */
-    Page<EsProduct> search(String keyword, Integer pageNum, Integer pageSize);
-
+    Iterable<EsProduct> search(String keyword, Integer pageNum, Integer pageSize);
 
 
 }

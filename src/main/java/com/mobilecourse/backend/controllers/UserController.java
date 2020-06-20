@@ -408,8 +408,9 @@ public class UserController extends CommonController {
                                @RequestParam(value = "type")String type) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
-            Page<EsProduct> esp_page=esService.search(keyword,0,10);
-            List<EsProduct> esp_list=esp_page.getContent();
+//            Page<EsProduct> esp_page=esService.search(keyword,0,10);
+//            List<EsProduct> esp_list=esp_page.getContent();
+            Iterable<EsProduct> esp_list=esService.search(keyword,0,10);
             JSONArray jsonArray = new JSONArray();
             boolean ifAll=type.equals("All");
             for (EsProduct s : esp_list) {
@@ -434,8 +435,9 @@ public class UserController extends CommonController {
     public String recommend(HttpServletRequest request) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
-            Page<EsProduct> esp_page=esService.search("软件",0,10);
-            List<EsProduct> esp_list=esp_page.getContent();
+//            Page<EsProduct> esp_page=esService.search("软件",0,10);
+//            List<EsProduct> esp_list=esp_page.getContent();
+            Iterable<EsProduct> esp_list=esService.search(account.getDepartment()+account.getPersonal_info(),0,10);
             JSONArray jsonArray = new JSONArray();
             for (EsProduct s : esp_list) {
                 JSONObject jsonObject = new JSONObject();
