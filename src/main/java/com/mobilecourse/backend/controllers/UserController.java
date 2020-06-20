@@ -139,7 +139,7 @@ public class UserController extends CommonController {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             String username = account.getUsername();
-            System.out.println(username);
+            // System.out.println(username);
             if(UserMapper.ifUsernameDuplicate(newName)>0){
                 return wrapperMsg("invalid","该用户名已存在",null);
             }

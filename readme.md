@@ -54,9 +54,27 @@ elasticsearch-analysis-ik-6.2.2 中文分词插件
         ```
       elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.2/elasticsearch-analysis-ik-6.2.2.zip
         ```
+      速度慢的话，建议离线下载插件，加压放到plugins目录中。
     * 运行bin目录下的elasticsearch.bat启动Elasticsearch
     * 打开http://localhost:9200看到elasticsearch的配置文字表明安装成功
     
-    
+* linux(ubuntu)
+    * 踩坑无数后，把linux当作本地机子进行配置，也就是跟windows基本一样的操作。不一样的是，es不允许root用户跑服务，因此得创建一个新用户，给权限，再运行。详情可以看https://blog.csdn.net/ProMonkey_chen/article/details/80489000
+    * 以下是不可行的方案（全是坑。。。） 强烈建议如果是自己的单个学生机服务器，不要用docker，容易爆内存，还有跨域问题，以及其他千奇百怪的问题。。。
+        * 先安装docker
+            ```
+            curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+            ```
+        * 安装elasticsearch和ik插件
+            ```
+            docker pull docker.elastic.co/elasticsearch/elasticsearch:6.2.2
+            docker run -d --name es  -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" [填imageID]
+            // install ik plugin
+            docker exec -it es /bin/bash
+            ./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v6.2.2/elasticsearch-analysis-ik-6.2.2.zip
+            exit
+            docker restart es
+            ```  
+        https://blog.csdn.net/u012211603/article/details/90757253
 ####可参考学习资料
 * https://juejin.im/post/5cfba3e9f265da1b614fea60#heading-9
