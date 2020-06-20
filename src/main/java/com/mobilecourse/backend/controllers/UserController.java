@@ -2,6 +2,8 @@ package com.mobilecourse.backend.controllers;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mobilecourse.backend.dao.StudentDao;
+import com.mobilecourse.backend.dao.TeacherDao;
 import com.mobilecourse.backend.dao.UserDao;
 import com.mobilecourse.backend.model.Plan;
 import com.mobilecourse.backend.model.Project;
@@ -34,6 +36,12 @@ public class UserController extends CommonController {
     @Autowired
     private EsProductService esService;
 
+    @Autowired
+    private TeacherDao TeacherMapper;
+
+    @Autowired
+    private StudentDao StudentMapper;
+
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public String register(@RequestParam(value = "username")String username,
                          @RequestParam(value = "password")String password,
@@ -60,7 +68,7 @@ public class UserController extends CommonController {
             esp.setDepartment("");
             esp.setItem_id(s.getId());
             esp.setUser_id(s.getId());
-            esp.setKeywords("");
+            esp.setKeywords(username);
             esp.setName(username);
             esp.setSubTitle("");
             // 存储文档到es中
@@ -109,6 +117,17 @@ public class UserController extends CommonController {
         if(account!=null) {//如果不为空
             String username = account.getUsername();
             UserMapper.updateSignature(username,signature);
+
+            // update elasticsearch storage
+            EsProduct esp=null;
+            if(account.isType()) {
+                esp = esService.get(account.getId() * 4 - 2);
+            }else {
+                esp = esService.get(account.getId() * 4 - 3);
+            }
+            esp.setSubTitle(signature);
+            esService.create(esp);
+
             return wrapperMsg("valid","成功更新",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
@@ -125,9 +144,20 @@ public class UserController extends CommonController {
                 return wrapperMsg("invalid","该用户名已存在",null);
             }
             UserMapper.updateUsername(username,newName);
-            removeInfoFromSession(request,"sid");
+            //removeInfoFromSession(request,"sid");
             account.setUsername(newName);
-            putInfoToSession(request, "sid", account);
+            //putInfoToSession(request, "sid", account);
+
+            // update elasticsearch storage
+            EsProduct esp=null;
+            if(account.isType()) {
+                esp = esService.get(account.getId() * 4 - 2);
+            }else {
+                esp = esService.get(account.getId() * 4 - 3);
+            }
+            esp.setName(newName);
+            esService.create(esp);
+
             return wrapperMsg("valid","成功更新",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
@@ -326,10 +356,46 @@ public class UserController extends CommonController {
             String username = account.getUsername();
 
             // elasticsearch需要-->减少一次数据库查询，详见TeacherController.upload_recruit
+            // for new item
             account.setDepartment(department);
             account.setReal_name(realname);
-
             UserMapper.verification(username,realname,school,department,grade);
+
+            // update elasticsearch storage (existed items)
+            // users
+            EsProduct esp=null;
+            if(account.isType()) {
+                esp = esService.get(account.getId() * 4 - 2);
+            }else{
+                esp = esService.get(account.getId()* 4 - 3);
+            }
+            esp.setDepartment(department);
+            esp.setReal_name(realname);
+            esp.setKeywords(realname);
+            esService.create(esp);
+
+            if(account.isType()) {
+                // projects
+                List<Project> list = TeacherMapper.getProById(account.getId());
+                for (Project pro : list) {
+                    esp = esService.get(pro.getId() * 4);
+                    esp.setDepartment(department);
+                    esp.setReal_name(realname);
+                    esp.setKeywords(realname);
+                    esService.create(esp);
+                }
+            }else {
+                // plans
+                List<Plan> list = StudentMapper.getMyPlan(account.getId());
+                for (Plan pro : list) {
+                    esp = esService.get(pro.getId() * 4-1);
+                    esp.setDepartment(department);
+                    esp.setReal_name(realname);
+                    esp.setKeywords(realname);
+                    esService.create(esp);
+                }
+            }
+
             return wrapperMsg("valid","成功验证",null);
         }else {
             return wrapperMsg("invalid","未成功验证",null);
@@ -353,12 +419,35 @@ public class UserController extends CommonController {
                     jsonObject.put("id", s.getItem_id());
                     jsonObject.put("description", s.getSubTitle());
                     jsonObject.put("title", s.getName());
-                    jsonObject.put("name", s.getReal_name());
+                    jsonObject.put("name", s.getKeywords());
                     jsonObject.put("department", s.getDepartment());
                     jsonArray.add(jsonObject);
                 }
             }
-            return wrapperMsgArray("valid","成功验证",jsonArray);
+            return wrapperMsgArray("valid","",jsonArray);
+        }else {
+            return wrapperMsg("invalid","未成功验证",null);
+        }
+    }
+
+    @RequestMapping(value = "/recommend",method = {RequestMethod.POST})
+    public String recommend(HttpServletRequest request) {
+        User account=getUserFromSession(request);
+        if(account!=null) {//如果不为空
+            Page<EsProduct> esp_page=esService.search("软件",0,10);
+            List<EsProduct> esp_list=esp_page.getContent();
+            JSONArray jsonArray = new JSONArray();
+            for (EsProduct s : esp_list) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("type", s.getType());
+                jsonObject.put("id", s.getItem_id());
+                jsonObject.put("description", s.getSubTitle());
+                jsonObject.put("title", s.getName());
+                jsonObject.put("name", s.getKeywords());
+                jsonObject.put("department", s.getDepartment());
+                jsonArray.add(jsonObject);
+            }
+            return wrapperMsgArray("valid","",jsonArray);
         }else {
             return wrapperMsg("invalid","未成功验证",null);
         }

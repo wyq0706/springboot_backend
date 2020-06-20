@@ -121,6 +121,17 @@ public class StudentController extends CommonController {
         s.setDescription(description);
         s.setId(id);
         StudentMapper.updatePlan(s);
+
+        // update elasticsearch storage
+        EsProduct esp=esService.get(account.getId() * 4-1);
+        if(!title.equals("")) {
+            esp.setName(title);
+        }
+        if(!description.equals("")) {
+            esp.setSubTitle(description);
+        }
+        esService.create(esp);
+
         return wrapperMsg("valid","成功修改",null);
     }
 
@@ -138,6 +149,10 @@ public class StudentController extends CommonController {
             return wrapperMsg("invalid","项目id不能为空",null);
         }
         StudentMapper.cancelPlan(id);
+
+        // delete from elasticsearch storage
+        esService.delete(id*4-1);
+
         return wrapperMsg("valid", "成功删除", null);
     }
 

@@ -61,6 +61,7 @@ public class TeacherController extends CommonController {
             esp.setUser_id(s.getTeacher_id());
             esp.setType("project");
             esp.setKeywords(account.getReal_name());
+            esp.setReal_name(account.getReal_name());
             esp.setName(s.getTitle());
             esp.setSubTitle(s.getDescription());
             // 存储文档到es中
@@ -96,6 +97,17 @@ public class TeacherController extends CommonController {
         s.setDescription(description);
         s.setTeacher_id(account.getId());
         TeacherMapper.updateProject(s);
+
+        // update elasticsearch storage
+        EsProduct esp=esService.get(account.getId() * 4);
+        if(!title.equals("")) {
+            esp.setName(title);
+        }
+        if(!description.equals("")) {
+            esp.setSubTitle(description);
+        }
+        esService.create(esp);
+
         return wrapperMsg("valid","成功修改",null);
     }
 
@@ -113,6 +125,9 @@ public class TeacherController extends CommonController {
             return wrapperMsg("invalid","项目id不能为空",null);
         }
         TeacherMapper.cancelProject(id);
+
+        // delete from elasticsearch storage
+        esService.delete(id*4);
         return wrapperMsg("valid", "成功删除", null);
     }
 

@@ -42,9 +42,21 @@ public class EsProductServiceImpl implements EsProductService {
 //        return result;
 //    }
 
+    @Override
+    public EsProduct get(int id) {
+        EsProduct esp=productRepository.queryProductById(id);
+        return esp;
+    }
+
+    @Override
+    public void delete(Integer id) {
+        productRepository.deleteById(id);
+    }
+
 //    @Override
-//    public void delete(int id) {
-//        productRepository.deleteById(id);
+//    public Page<EsProduct> getRelatedItems(int id) {
+//        Page<EsProduct> esp=productRepository.delete(id);
+//        return esp;
 //    }
 
     @Override
@@ -55,7 +67,7 @@ public class EsProductServiceImpl implements EsProductService {
     }
 
 //    @Override
-//    public void delete(List<Integer> ids) {
+//    public void get(List<Integer> ids) {
 //        if (!CollectionUtils.isEmpty(ids)) {
 //            List<EsProduct> esProductList = new ArrayList<>();
 //            for (int id : ids) {

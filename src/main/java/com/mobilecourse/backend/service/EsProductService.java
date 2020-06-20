@@ -15,15 +15,25 @@ public interface EsProductService {
 //     */
 //    int importAll();
 
+    /**
+     * 根据id获取用户
+     */
+    EsProduct get(int id);
+
 //    /**
-//     * 根据id删除
+//     * 根据用户id获取项目
 //     */
-//    void delete(int id);
+//    Page<EsProduct> getRelatedItems(int id);
 
     /**
-     * 根据id创建
+     * 创建
      */
     EsProduct create(EsProduct esp);
+
+    /**
+     * 根据id删除
+     */
+    void delete(Integer Id);
 
 //    /**
 //     * 批量删除
@@ -34,5 +44,7 @@ public interface EsProductService {
      * 根据关键字搜索名称或者副标题
      */
     Page<EsProduct> search(String keyword, Integer pageNum, Integer pageSize);
+
+
 
 }

@@ -21,4 +21,7 @@ public interface EsProductRepository extends ElasticsearchRepository<EsProduct, 
      */
     Page<EsProduct> findByNameOrSubTitleOrKeywords(String name, String subTitle, String keywords, Pageable page);
 
+    EsProduct queryProductById(Integer id);
+
+
 }
