@@ -168,6 +168,25 @@ public class UserController extends CommonController {
             esp.setKeywords(newName);
             esService.create(esp);
 
+            // update relevant projects/plans
+            if(account.isType()) {
+                // projects
+                List<Project> list = TeacherMapper.getProById(account.getId());
+                for (Project pro : list) {
+                    esp = esService.get(pro.getId() * 4);
+                    esp.setKeywords(newName);
+                    esService.create(esp);
+                }
+            }else {
+                // plans
+                List<Plan> list = StudentMapper.getMyPlan(account.getId());
+                for (Plan pro : list) {
+                    esp = esService.get(pro.getId() * 4-1);
+                    esp.setKeywords(newName);
+                    esService.create(esp);
+                }
+            }
+
             return wrapperMsg("valid","成功更新",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
