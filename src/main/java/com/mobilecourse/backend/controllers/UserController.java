@@ -2,13 +2,11 @@ package com.mobilecourse.backend.controllers;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mobilecourse.backend.dao.ChatDao;
 import com.mobilecourse.backend.dao.StudentDao;
 import com.mobilecourse.backend.dao.TeacherDao;
 import com.mobilecourse.backend.dao.UserDao;
-import com.mobilecourse.backend.model.Plan;
-import com.mobilecourse.backend.model.Project;
-import com.mobilecourse.backend.model.Test;
-import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.model.*;
 import com.mobilecourse.backend.service.EsProductService;
 import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +39,9 @@ public class UserController extends CommonController {
 
     @Autowired
     private StudentDao StudentMapper;
+
+    @Autowired
+    private ChatDao ChatMapper;
 
     @RequestMapping(value = "/register", method = { RequestMethod.POST })
     public String register(@RequestParam(value = "username")String username,
@@ -267,6 +268,14 @@ public class UserController extends CommonController {
         if(account!=null) {//如果不为空
             if(user_id==account.getId()){return wrapperMsg("invalid","不可以追踪自己！",null);}
             UserMapper.goFollow(user_id,account.getId());
+
+            // 添加提醒信息到聊天记录中
+            Chat c=new Chat();
+            c.setFrom_id(account.getId());
+            c.setTo_id(user_id);
+            c.setMessage("Hi，我是"+account.getUsername()+"，很高兴认识你！我开始关注你了~");
+            c.setIfRead(false);
+            ChatMapper.insertMessage(c);
             return wrapperMsg("valid","成功追踪",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
