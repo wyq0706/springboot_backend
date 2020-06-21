@@ -43,6 +43,9 @@ public class ChatController extends CommonController {
                 jsonObject.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getCreated_time()));
                 jsonArray.add(jsonObject);
             }
+
+            // 刷新已读
+            ChatMapper.updateRead(id,account.getId());
             return wrapperMsgArray("valid","",jsonArray);
         }else {
             return wrapperMsg("invalid","未登录",null);
@@ -62,6 +65,13 @@ public class ChatController extends CommonController {
                 Chat c=ChatMapper.getLatestChat(s.getId(),account.getId());
                 jsonObject.put("latest_content", c.getMessage());
                 jsonObject.put("time",  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(c.getCreated_time()));
+
+                // 判断是否未读
+                if(c.isIfRead()||c.getFrom_id()==account.getId())
+                    jsonObject.put("real_all",true);
+                else
+                    jsonObject.put("real_all",false);
+
                 jsonArray.add(jsonObject);
             }
             return wrapperMsgArray("valid", "", jsonArray);

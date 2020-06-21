@@ -38,7 +38,7 @@ foreign key (student_id) references user(id) on delete cascade on update cascade
 
 create table chat (id int unsigned auto_increment,
 from_id int unsigned,to_id int unsigned,
-message varchar(100) not null,
+message varchar(100) not null, ifRead varchar(1) default false,
 created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 primary key (id));
 ```

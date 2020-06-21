@@ -12,6 +12,15 @@ public class Chat {
     private int from_id;
     private int to_id;
     private Timestamp created_time;
+    private boolean ifRead;
+
+    public boolean isIfRead() {
+        return ifRead;
+    }
+
+    public void setIfRead(boolean ifRead) {
+        this.ifRead = ifRead;
+    }
 
     public int getId() {
         return id;

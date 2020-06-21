@@ -13,6 +13,12 @@
         </trim>;
     </insert>
 
+    <update id="updateRead" parameterType="java.lang.Integer">
+        update chat
+        set ifRead=true
+        where from_id=#{from_id} and to_id=#{to_id};
+    </update>
+
     <select id="getMessage" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Chat">
         SELECT *
         FROM chat

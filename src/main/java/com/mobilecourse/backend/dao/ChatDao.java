@@ -17,6 +17,8 @@ public interface ChatDao {
 
     void deleteMessage(Chat c);
 
+    void updateRead(@Param("from_id") Integer i, @Param("to_id") Integer j);
+
     List<User> getChatter(@Param("id") Integer i);
 
     Chat getLatestChat(@Param("from_id") Integer i, @Param("to_id") Integer j);
