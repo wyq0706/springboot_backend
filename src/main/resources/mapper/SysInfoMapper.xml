@@ -44,7 +44,7 @@
         );
     </select>
 
-    <select id="getLatestChat" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Chat">
+    <select id="getLatestSysInfo" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.SysInfo">
         SELECT *
         FROM (
             SELECT *

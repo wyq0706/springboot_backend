@@ -21,7 +21,7 @@ public interface SysInfoDao {
 
     List<User> getChatter(@Param("id") Integer i);
 
-    SysInfo getLatestChat(@Param("id")Integer i);
+    SysInfo getLatestSysInfo(@Param("id")Integer i);
 
     Integer getUnreadCount(@Param("id")Integer i);
 

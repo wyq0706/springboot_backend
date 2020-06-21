@@ -165,7 +165,7 @@ public class UserController extends CommonController {
             }else {
                 esp = esService.get(account.getId() * 4 - 3);
             }
-            esp.setKeywords(username);
+            esp.setKeywords(newName);
             esService.create(esp);
 
             return wrapperMsg("valid","成功更新",null);

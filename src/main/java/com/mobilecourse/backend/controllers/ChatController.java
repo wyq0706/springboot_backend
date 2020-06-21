@@ -77,19 +77,21 @@ public class ChatController extends CommonController {
         if (account != null) {//如果不为空
             // system info
             JSONArray jsonArray = new JSONArray();
-            SysInfo s=SysInfoMapper.getLatestChat(account.getId());
-            JSONObject jsonObj = new JSONObject();
-            jsonObj.put("name", "系统提醒");
-            jsonObj.put("from_id", 0);
-            jsonObj.put("latest_content", s.getMessage());
-            jsonObj.put("time",  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getCreated_time()));
+            SysInfo s=SysInfoMapper.getLatestSysInfo(account.getId());
+            if(s!=null) {
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("name", "系统提醒");
+                jsonObj.put("from_id", 0);
+                jsonObj.put("latest_content", s.getMessage());
+                jsonObj.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getCreated_time()));
 
-            // 判断是否未读
-            if(s.isIfRead())
-                jsonObj.put("real_all",true);
-            else
-                jsonObj.put("real_all",false);
-            jsonArray.add(jsonObj);
+                // 判断是否未读
+                if (s.isIfRead())
+                    jsonObj.put("real_all", true);
+                else
+                    jsonObj.put("real_all", false);
+                jsonArray.add(jsonObj);
+            }
 
             // chat info
             List<User> list = ChatMapper.getChatter(account.getId());
