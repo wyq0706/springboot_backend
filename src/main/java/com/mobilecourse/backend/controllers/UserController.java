@@ -69,7 +69,7 @@ public class UserController extends CommonController {
             esp.setItem_id(s.getId());
             esp.setUser_id(s.getId());
             esp.setKeywords(username);
-            esp.setName(username);
+            esp.setName("");
             esp.setSubTitle("");
             // 存储文档到es中
             esService.create(esp);
@@ -155,7 +155,7 @@ public class UserController extends CommonController {
             }else {
                 esp = esService.get(account.getId() * 4 - 3);
             }
-            esp.setName(newName);
+            esp.setKeywords(username);
             esService.create(esp);
 
             return wrapperMsg("valid","成功更新",null);
@@ -371,7 +371,6 @@ public class UserController extends CommonController {
             }
             esp.setDepartment(department);
             esp.setReal_name(realname);
-            esp.setKeywords(realname);
             esService.create(esp);
 
             if(account.isType()) {
@@ -381,7 +380,6 @@ public class UserController extends CommonController {
                     esp = esService.get(pro.getId() * 4);
                     esp.setDepartment(department);
                     esp.setReal_name(realname);
-                    esp.setKeywords(realname);
                     esService.create(esp);
                 }
             }else {
@@ -391,7 +389,6 @@ public class UserController extends CommonController {
                     esp = esService.get(pro.getId() * 4-1);
                     esp.setDepartment(department);
                     esp.setReal_name(realname);
-                    esp.setKeywords(realname);
                     esService.create(esp);
                 }
             }
@@ -419,8 +416,17 @@ public class UserController extends CommonController {
                     jsonObject.put("type", s.getType());
                     jsonObject.put("id", s.getItem_id());
                     jsonObject.put("description", s.getSubTitle());
-                    jsonObject.put("title", s.getName());
-                    jsonObject.put("name", s.getKeywords());
+                    if(s.getType().equals("teacher")||s.getType().equals("student")) {
+                        jsonObject.put("title", s.getKeywords());
+                        jsonObject.put("name",s.getReal_name());
+                    }else{
+                        jsonObject.put("title", s.getName());
+                        if(s.getReal_name().length()==0) {
+                            jsonObject.put("name", s.getKeywords());
+                        }else{
+                            jsonObject.put("name", s.getReal_name());
+                        }
+                    }
                     jsonObject.put("department", s.getDepartment());
                     jsonArray.add(jsonObject);
                 }

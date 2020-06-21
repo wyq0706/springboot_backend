@@ -20,17 +20,17 @@ public class EsProduct implements Serializable {
     private int item_id;
 
     private String type;
-    @Field(type = FieldType.Keyword)
+    @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
     private String department;
     private int user_id;
     @Field(type = FieldType.Keyword)
     private String real_name;
     @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
-    private String name;
+    private String name; //title for project/plan
     @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
-    private String subTitle;
-    @Field(analyzer = "ik_max_word",type = FieldType.Text)
-    private String keywords;
+    private String subTitle; //description for project/plan ,signature for user
+    @Field(analyzer = "ik_max_word",searchAnalyzer = "ik_max_word",type = FieldType.Text)
+    private String keywords; //username
 
     public int getId() {
         return id;

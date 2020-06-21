@@ -60,7 +60,7 @@ public class TeacherController extends CommonController {
             esp.setItem_id(s.getId());
             esp.setUser_id(s.getTeacher_id());
             esp.setType("project");
-            esp.setKeywords(account.getReal_name());
+            esp.setKeywords(account.getUsername());
             esp.setReal_name(account.getReal_name());
             esp.setName(s.getTitle());
             esp.setSubTitle(s.getDescription());

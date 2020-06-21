@@ -86,8 +86,9 @@ public class StudentController extends CommonController {
         esp.setItem_id(s.getId());
         esp.setUser_id(s.getStudent_id());
         esp.setType("plan");
-        esp.setKeywords(account.getReal_name());
+        esp.setKeywords(account.getUsername());
         esp.setName(s.getTitle());
+        esp.setReal_name(account.getReal_name());
         esp.setSubTitle(s.getDescription());
         // 存储文档到es中
         esService.create(esp);
