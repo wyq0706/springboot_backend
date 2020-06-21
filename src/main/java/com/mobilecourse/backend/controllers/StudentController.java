@@ -2,11 +2,13 @@ package com.mobilecourse.backend.controllers;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mobilecourse.backend.dao.ChatDao;
 import com.mobilecourse.backend.dao.StudentDao;
+import com.mobilecourse.backend.dao.SysInfoDao;
 import com.mobilecourse.backend.dao.UserDao;
-import com.mobilecourse.backend.model.Plan;
-import com.mobilecourse.backend.model.Project;
-import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.model.*;
+import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
+import com.mobilecourse.backend.service.EsProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,11 +29,25 @@ public class StudentController extends CommonController {
     @Autowired
     private StudentDao StudentMapper;
 
+    @Autowired
+    private SysInfoDao SysInfoMapper;
+
+    @Autowired
+    private EsProductService esService;
+
     @RequestMapping(value = "/sign_in", method = { RequestMethod.POST })
     public String go_singin(HttpServletRequest request, @RequestParam(value = "project_id")Integer project_id) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
             StudentMapper.goSignin(project_id,account.getId());
+
+            // 添加提醒信息到系统信息记录中
+            SysInfo c=new SysInfo();
+            c.setFrom_id(account.getId());
+            Project pro=StudentMapper.getProByProId(project_id).get(0);
+            c.setTo_id(pro.getTeacher_id());
+            c.setMessage(account.getUsername()+"报名了你的【"+pro.getTitle()+"】项目。");
+            SysInfoMapper.insertMessage(c);
             return wrapperMsg("valid","报名成功",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
@@ -72,6 +88,22 @@ public class StudentController extends CommonController {
         s.setDescription(description);
         s.setStudent_id(account.getId());
         StudentMapper.uploadPlan(s);
+
+        // elasticsearch storage
+        EsProduct esp=new EsProduct();
+        //防止不同类型的相同id碰撞
+        esp.setId(s.getId()*4-1);
+        esp.setDepartment(account.getDepartment());
+        esp.setItem_id(s.getId());
+        esp.setUser_id(s.getStudent_id());
+        esp.setType("plan");
+        esp.setKeywords(account.getUsername());
+        esp.setName(s.getTitle());
+        esp.setReal_name(account.getReal_name());
+        esp.setSubTitle(s.getDescription());
+        // 存储文档到es中
+        esService.create(esp);
+
         JSONObject wrapperMsg = new JSONObject();
         wrapperMsg.put("plan_id", s.getId());
         return wrapperMsg("valid","成功创建",wrapperMsg);
@@ -101,6 +133,17 @@ public class StudentController extends CommonController {
         s.setDescription(description);
         s.setId(id);
         StudentMapper.updatePlan(s);
+
+        // update elasticsearch storage
+        EsProduct esp=esService.get(account.getId() * 4-1);
+        if(!title.equals("")) {
+            esp.setName(title);
+        }
+        if(!description.equals("")) {
+            esp.setSubTitle(description);
+        }
+        esService.create(esp);
+
         return wrapperMsg("valid","成功修改",null);
     }
 
@@ -118,6 +161,10 @@ public class StudentController extends CommonController {
             return wrapperMsg("invalid","项目id不能为空",null);
         }
         StudentMapper.cancelPlan(id);
+
+        // delete from elasticsearch storage
+        esService.delete(id*4-1);
+
         return wrapperMsg("valid", "成功删除", null);
     }
 

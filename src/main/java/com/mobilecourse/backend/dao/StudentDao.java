@@ -32,4 +32,6 @@ public interface StudentDao {
 
     List<User> getUserById(@Param("id")Integer id);
 
+    List<Project> getProByProId(@Param("id")Integer id);
+
 }

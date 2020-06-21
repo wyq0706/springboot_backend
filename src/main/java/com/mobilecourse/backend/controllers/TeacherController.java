@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.dao.TeacherDao;
 import com.mobilecourse.backend.model.Project;
 import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
+import com.mobilecourse.backend.service.EsProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,9 @@ public class TeacherController extends CommonController {
     @Autowired
     private TeacherDao TeacherMapper;
 
+    @Autowired
+    private EsProductService esService;
+
     @RequestMapping(value = "/upload_recruit", method = { RequestMethod.POST })
     public String upload(HttpServletRequest request,@RequestParam(value = "title")String title,
                          @RequestParam(value = "research_direction",defaultValue="")String research_direction,
@@ -38,6 +43,7 @@ public class TeacherController extends CommonController {
             if(title==null){
                 return wrapperMsg("invalid","标题不能为空",null);
             }
+            // mysql storage
             Project s = new Project();
             s.setTitle(title);
             s.setResearch_direction(research_direction);
@@ -45,6 +51,22 @@ public class TeacherController extends CommonController {
             s.setDescription(description);
             s.setTeacher_id(account.getId());
             TeacherMapper.uploadProject(s);
+
+            // elasticsearch storage
+            EsProduct esp=new EsProduct();
+            //防止不同类型的相同id碰撞
+            esp.setId(s.getId()*4);
+            esp.setDepartment(account.getDepartment());
+            esp.setItem_id(s.getId());
+            esp.setUser_id(s.getTeacher_id());
+            esp.setType("project");
+            esp.setKeywords(account.getUsername());
+            esp.setReal_name(account.getReal_name());
+            esp.setName(s.getTitle());
+            esp.setSubTitle(s.getDescription());
+            // 存储文档到es中
+            esService.create(esp);
+
             JSONObject wrapperMsg = new JSONObject();
             wrapperMsg.put("project_id", s.getId());
             return wrapperMsg("valid","成功创建",wrapperMsg);
@@ -75,6 +97,17 @@ public class TeacherController extends CommonController {
         s.setDescription(description);
         s.setTeacher_id(account.getId());
         TeacherMapper.updateProject(s);
+
+        // update elasticsearch storage
+        EsProduct esp=esService.get(account.getId() * 4);
+        if(!title.equals("")) {
+            esp.setName(title);
+        }
+        if(!description.equals("")) {
+            esp.setSubTitle(description);
+        }
+        esService.create(esp);
+
         return wrapperMsg("valid","成功修改",null);
     }
 
@@ -92,6 +125,9 @@ public class TeacherController extends CommonController {
             return wrapperMsg("invalid","项目id不能为空",null);
         }
         TeacherMapper.cancelProject(id);
+
+        // delete from elasticsearch storage
+        esService.delete(id*4);
         return wrapperMsg("valid", "成功删除", null);
     }
 

@@ -66,6 +66,10 @@ public class WebSocketServer {
         c.setFrom_id(Integer.parseInt(sid));
         c.setTo_id(Integer.parseInt(to));
         c.setMessage(mes);
+        if (webSocketTable.get(to)!=null )
+            c.setIfRead(true);
+        else
+            c.setIfRead(false);
         ChatMapper.insertMessage(c);
         sendMessageTo(mes,to);
     }

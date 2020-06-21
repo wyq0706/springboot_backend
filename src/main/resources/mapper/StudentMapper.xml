@@ -79,4 +79,10 @@
         FROM user
         where id=#{id}
     </select>
+
+    <select id="getProByProId" resultType="com.mobilecourse.backend.model.Project">
+        SELECT *
+        FROM project
+        where project.id=#{id}
+    </select>
 </mapper>

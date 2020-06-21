@@ -1,6 +1,6 @@
 package com.mobilecourse.backend.dao;
 
-import com.mobilecourse.backend.model.Chat;
+import com.mobilecourse.backend.model.SysInfo;
 import com.mobilecourse.backend.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -8,20 +8,20 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface ChatDao {
+public interface SysInfoDao {
     // 函数的名称要和对应的Mapper文件中的id完全对应
 
-    void insertMessage(Chat c);
+    void insertMessage(SysInfo c);
 
-    List<Chat> getMessage(@Param("from_id") Integer i, @Param("to_id") Integer j);
+    List<SysInfo> getMessage(@Param("id")Integer i);
 
-    void deleteMessage(Chat c);
+    void deleteMessage(SysInfo c);
 
-    void updateRead(@Param("from_id") Integer i, @Param("to_id") Integer j);
+    void updateRead(@Param("id")Integer i);
 
     List<User> getChatter(@Param("id") Integer i);
 
-    Chat getLatestChat(@Param("from_id") Integer i, @Param("to_id") Integer j);
+    SysInfo getLatestChat(@Param("id")Integer i);
 
     Integer getUnreadCount(@Param("id")Integer i);
 
