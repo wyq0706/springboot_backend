@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <!-- 指定了mapper对应的dao -->
-<mapper namespace="com.mobilecourse.backend.dao.ChatDao">
+<mapper namespace="com.mobilecourse.backend.dao.SysInfoDao">
 
-    <insert id="insertMessage" keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.Chat">
-        insert into chat
+    <insert id="insertMessage" keyProperty="id" useGeneratedKeys="true" parameterType="com.mobilecourse.backend.model.SysInfo">
+        insert into sysInfo
         <trim prefix="(" suffix=")" suffixOverrides="," >
             from_id,to_id,message,ifRead
         </trim>
@@ -14,19 +14,15 @@
     </insert>
 
     <update id="updateRead" parameterType="java.lang.Integer">
-        update chat
+        update sysInfo
         set ifRead=true
-        where from_id=#{from_id} and to_id=#{to_id};
+        where to_id=#{id};
     </update>
 
-    <select id="getMessage" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.Chat">
+    <select id="getMessage" parameterType="java.lang.Integer" resultType="com.mobilecourse.backend.model.SysInfo">
         SELECT *
-        FROM chat
-        WHERE from_id=#{from_id} and to_id=#{to_id}
-        UNION
-        SELECT *
-        FROM chat
-        WHERE from_id=#{to_id} and to_id=#{from_id}
+        FROM sysInfo
+        WHERE to_id=#{id}
         ORDER BY created_time ASC;
     </select>
 
@@ -37,11 +33,11 @@
             SELECT distinct(tmp_id)
             FROM (
                 SELECT from_id as tmp_id,created_time
-                FROM chat
+                FROM sysInfo
                 WHERE to_id=#{id}
                 UNION
                 SELECT to_id as tmp_id,created_time
-                FROM chat
+                FROM sysInfo
                 WHERE from_id=#{id}
                 ORDER BY created_time DESC
             ) as tmp
@@ -52,19 +48,15 @@
         SELECT *
         FROM (
             SELECT *
-            FROM chat
-            WHERE from_id=#{from_id} and to_id=#{to_id}
-            UNION
-            SELECT *
-            FROM chat
-            WHERE from_id=#{to_id} and to_id=#{from_id}
+            FROM sysInfo
+            WHERE to_id=#{id}
             ORDER BY created_time DESC
         ) as tmp LIMIT 1;
     </select>
 
     <select id="getUnreadCount" parameterType="java.lang.Integer" resultType="java.lang.Integer">
         SELECT count(*)
-        FROM chat
+        FROM sysInfo
         WHERE to_id=#{id} and ifRead=false;
     </select>
 

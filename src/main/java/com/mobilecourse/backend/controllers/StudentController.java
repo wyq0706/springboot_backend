@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mobilecourse.backend.dao.ChatDao;
 import com.mobilecourse.backend.dao.StudentDao;
+import com.mobilecourse.backend.dao.SysInfoDao;
 import com.mobilecourse.backend.dao.UserDao;
-import com.mobilecourse.backend.model.Chat;
-import com.mobilecourse.backend.model.Plan;
-import com.mobilecourse.backend.model.Project;
-import com.mobilecourse.backend.model.User;
+import com.mobilecourse.backend.model.*;
 import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
 import com.mobilecourse.backend.service.EsProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,7 @@ public class StudentController extends CommonController {
     private StudentDao StudentMapper;
 
     @Autowired
-    private ChatDao ChatMapper;
+    private SysInfoDao SysInfoMapper;
 
     @Autowired
     private EsProductService esService;
@@ -43,14 +41,13 @@ public class StudentController extends CommonController {
         if(account!=null) {//如果不为空
             StudentMapper.goSignin(project_id,account.getId());
 
-            // 添加提醒信息到聊天记录中
-            Chat c=new Chat();
+            // 添加提醒信息到系统信息记录中
+            SysInfo c=new SysInfo();
             c.setFrom_id(account.getId());
             Project pro=StudentMapper.getProByProId(project_id).get(0);
             c.setTo_id(pro.getTeacher_id());
-            c.setMessage("老师您好，我是"+account.getUsername()+"，我刚刚报名了您的【"+pro.getTitle()+"】项目~");
-            c.setIfRead(false);
-            ChatMapper.insertMessage(c);
+            c.setMessage(account.getUsername()+"报名了你的【"+pro.getTitle()+"】项目。");
+            SysInfoMapper.insertMessage(c);
             return wrapperMsg("valid","报名成功",null);
         }else {
             return wrapperMsg("invalid","未登录",null);

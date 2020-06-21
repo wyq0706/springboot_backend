@@ -2,10 +2,7 @@ package com.mobilecourse.backend.controllers;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.mobilecourse.backend.dao.ChatDao;
-import com.mobilecourse.backend.dao.StudentDao;
-import com.mobilecourse.backend.dao.TeacherDao;
-import com.mobilecourse.backend.dao.UserDao;
+import com.mobilecourse.backend.dao.*;
 import com.mobilecourse.backend.model.*;
 import com.mobilecourse.backend.service.EsProductService;
 import com.mobilecourse.backend.nosql.elasticsearch.document.EsProduct;
@@ -39,6 +36,9 @@ public class UserController extends CommonController {
 
     @Autowired
     private StudentDao StudentMapper;
+
+    @Autowired
+    private SysInfoDao SysInfoMapper;
 
     @Autowired
     private ChatDao ChatMapper;
@@ -95,6 +95,15 @@ public class UserController extends CommonController {
                 JSONObject object=new JSONObject();
                 object.put("type",type);
                 object.put("user_id",s.get(0).getId());
+
+                // 获取未读提醒
+                Integer unreadChat=ChatMapper.getUnreadCount(s.get(0).getId());
+                Integer unreadSys=SysInfoMapper.getUnreadCount(s.get(0).getId());
+                if(unreadChat+unreadSys>0){
+                    object.put("read_all",false);
+                }else{
+                    object.put("read_all",true);
+                }
                 return wrapperMsg("valid","成功登录",object);
             }
     }
@@ -270,12 +279,12 @@ public class UserController extends CommonController {
             UserMapper.goFollow(user_id,account.getId());
 
             // 添加提醒信息到聊天记录中
-            Chat c=new Chat();
+            SysInfo c=new SysInfo();
             c.setFrom_id(account.getId());
             c.setTo_id(user_id);
-            c.setMessage("Hi，我是"+account.getUsername()+"，很高兴认识你！我开始关注你了~");
+            c.setMessage(account.getUsername()+"开始关注你了。");
             c.setIfRead(false);
-            ChatMapper.insertMessage(c);
+            SysInfoMapper.insertMessage(c);
             return wrapperMsg("valid","成功追踪",null);
         }else {
             return wrapperMsg("invalid","未登录",null);
@@ -418,7 +427,7 @@ public class UserController extends CommonController {
 //            List<EsProduct> esp_list=esp_page.getContent();
             Iterable<EsProduct> esp_list=esService.search(keyword,0,10);
             JSONArray jsonArray = new JSONArray();
-            boolean ifAll=type.equals("All");
+            boolean ifAll=type.equals("all");
             for (EsProduct s : esp_list) {
                 if(ifAll||type.equals(s.getType())) {
                     JSONObject jsonObject = new JSONObject();
@@ -450,17 +459,35 @@ public class UserController extends CommonController {
     public String recommend(HttpServletRequest request) {
         User account=getUserFromSession(request);
         if(account!=null) {//如果不为空
-//            Page<EsProduct> esp_page=esService.search("软件",0,10);
-//            List<EsProduct> esp_list=esp_page.getContent();
             Iterable<EsProduct> esp_list=esService.search(account.getDepartment()+account.getPersonal_info(),0,10);
             JSONArray jsonArray = new JSONArray();
+
+            // if语句比较多是为了将es中的document和前端所需要的字段进行对齐
             for (EsProduct s : esp_list) {
+
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("type", s.getType());
                 jsonObject.put("id", s.getItem_id());
                 jsonObject.put("description", s.getSubTitle());
-                jsonObject.put("title", s.getName());
-                jsonObject.put("name", s.getKeywords());
+                if(s.getType().equals("teacher")||s.getType().equals("student")) {
+                    jsonObject.put("title", s.getKeywords());
+
+                    // 奇怪需求：对于用户而言，有真实名字返回真实名字，不然返回未验证
+                    if(s.getReal_name().length()>0) {
+                        jsonObject.put("name", s.getReal_name());
+                    }else{
+                        jsonObject.put("name", "未验证");
+                    }
+                }else{
+                    jsonObject.put("title", s.getName());
+
+                    // 奇怪需求：对于项目而言，有真实名字返回真实名字，不然返回用户名
+                    if(s.getReal_name().length()==0) {
+                        jsonObject.put("name", s.getKeywords());
+                    }else{
+                        jsonObject.put("name", s.getReal_name());
+                    }
+                }
                 jsonObject.put("department", s.getDepartment());
                 jsonArray.add(jsonObject);
             }
