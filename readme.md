@@ -2,7 +2,7 @@
 
 ###mysql建表语句
 ```
-create database project character set utf8
+create database project character set utf8;
 
 use project;
 

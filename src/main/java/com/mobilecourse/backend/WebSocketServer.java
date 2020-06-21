@@ -53,6 +53,7 @@ public class WebSocketServer {
     // 在关闭连接时移除对应连接
     @OnClose
     public void onClose() {
+        System.out.println(sid + "成功断开websocket");
         webSocketTable.remove(this.sid);
     }
 

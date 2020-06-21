@@ -135,7 +135,7 @@ public class StudentController extends CommonController {
         StudentMapper.updatePlan(s);
 
         // update elasticsearch storage
-        EsProduct esp=esService.get(account.getId() * 4-1);
+        EsProduct esp=esService.get(id * 4-1);
         if(!title.equals("")) {
             esp.setName(title);
         }

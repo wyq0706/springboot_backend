@@ -448,6 +448,7 @@ public class UserController extends CommonController {
             Iterable<EsProduct> esp_list=esService.search(keyword,0,10);
             JSONArray jsonArray = new JSONArray();
             boolean ifAll=type.equals("all");
+
             for (EsProduct s : esp_list) {
                 if(ifAll||type.equals(s.getType())) {
                     JSONObject jsonObject = new JSONObject();
@@ -639,7 +640,7 @@ public class UserController extends CommonController {
         if(account!=null) {//如果不为空
             JSONObject jsonObject = new JSONObject();
             List<User> s = UserMapper.getUserById(id);
-            if(s==null){return wrapperMsg("invalid","没有该用户名的用户",null);}
+            if(s==null||s.size()==0){return wrapperMsg("invalid","没有该用户名的用户",null);}
             User otherUser = s.get(0);
             String username = otherUser.getUsername();
             Boolean type = otherUser.isType();

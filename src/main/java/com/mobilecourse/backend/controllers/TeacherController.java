@@ -99,7 +99,7 @@ public class TeacherController extends CommonController {
         TeacherMapper.updateProject(s);
 
         // update elasticsearch storage
-        EsProduct esp=esService.get(account.getId() * 4);
+        EsProduct esp=esService.get(id * 4);
         if(!title.equals("")) {
             esp.setName(title);
         }
