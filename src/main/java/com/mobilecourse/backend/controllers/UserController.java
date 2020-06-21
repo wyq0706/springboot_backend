@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 @RestController
@@ -582,7 +583,8 @@ public class UserController extends CommonController {
             }
             jsonObject.put("description",s.getDescription());
             jsonObject.put("requirement",s.getRequirement());
-            jsonObject.put("createTime",s.getCreated_time());
+            //jsonObject.put("createTime",s.getCreated_time());
+            jsonObject.put("createTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getCreated_time()));
             jsonObject.put("research_direction",s.getResearch_direction());
 
             boolean ifStarred = UserMapper.getProjectIfStarred(project_id, account.getId())>0;
@@ -613,9 +615,11 @@ public class UserController extends CommonController {
                     jsonObject.put("department","");
                 }else {
                     jsonObject.put("department", users.get(0).getDepartment());
+                    jsonObject.put("student_name",users.get(0).getUsername());
+                    jsonObject.put("student_real_name",users.get(0).getUsername());
                 }
                 jsonObject.put("description",plan.getDescription());
-                jsonObject.put("createTime",plan.getCreated_time());
+                jsonObject.put("createTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(plan.getCreated_time()));
 
                 return wrapperMsg("valid","",jsonObject);
             }
