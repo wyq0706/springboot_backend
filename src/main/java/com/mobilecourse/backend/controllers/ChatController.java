@@ -40,7 +40,7 @@ public class ChatController extends CommonController {
                 List<SysInfo> list=SysInfoMapper.getMessage(account.getId());
                 for (SysInfo s: list) {
                     JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("type", "rcver");
+                    jsonObject.put("type", "sender");
                     jsonObject.put("content", s.getMessage());
                     jsonObject.put("time", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(s.getCreated_time()));
                     jsonArray.add(jsonObject);

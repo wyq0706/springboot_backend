@@ -38,7 +38,7 @@
         SELECT *
         FROM user
         WHERE user.id in (
-        SELECT id
+        SELECT student_id
         FROM rela_project_signin
         WHERE project_id=#{project_id});
     </select>

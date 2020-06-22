@@ -494,7 +494,7 @@ public class UserController extends CommonController {
                     jsonObject.put("title", s.getKeywords());
 
                     // 奇怪需求：对于用户而言，有真实名字返回真实名字，不然返回未验证
-                    if(s.getReal_name().length()>0) {
+                    if(s.getReal_name()!=null&&s.getReal_name().length()>0) {
                         jsonObject.put("name", s.getReal_name());
                     }else{
                         jsonObject.put("name", "未验证");
